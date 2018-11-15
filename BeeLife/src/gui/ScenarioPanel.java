@@ -195,11 +195,12 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             Bird bird = this.birds.get(i);
             
             // passaro pleno
-            if (bird.getState().equals("pleno")){
+            if (bird.getStateBird().equals("pleno")){
                 
                 // aletera o estado do pássaro para ataque
                 if (haveBeeInX(bird.getPos_x())&& Math.random()*100 > 90){
                     bird.setState("atack");
+                    bird.addBehaviourBird(Bird.behaviour.ATACK);
                 }
                 
                 if (bird.getPos_x() > this.getWidth() || bird.getPos_x() < 0){
@@ -209,7 +210,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             }
             
             // passaro em ataque
-            if (bird.getState().equals("atack")){
+            if (bird.getStateBird().equals("atack")){
                 if (bird.getPos_x() > this.getWidth() || bird.getPos_x() < 0){
                     bird.setDirectionX(bird.getDirectionX() * - 1);
                 }        
@@ -220,6 +221,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                     // altera o estado do pássaro para pleno
                     if (bird.getPos_y() < 10){
                         bird.setState("pleno");
+                        bird.addBehaviourBird(Bird.behaviour.PEACE);
                     }
                 }
                 bird.setPos_y(bird.getPos_y() - bird.getSpeed()*5 * bird.getDirectionY());
@@ -395,7 +397,17 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     
     public void initBirds(int qtd){
         for (int i = 0; i < qtd; i++){
-            this.birds.add(new Bird(0+ (int) (Math.random()*1000) ,i + (int)(Math.random()*100)));
+            
+            String nome = "Bird" + String.valueOf(i);
+                    
+            try {
+                Bird bird = new Bird(0+ (int) (Math.random()*1000) ,i + (int)(Math.random()*100)); 
+                AgentController agentBird = this.ac.createNewAgent(nome, "model_agents.Bird", null);
+                agentBird.start();
+                this.birds.add(bird);
+            } catch (StaleProxyException ex) {
+                System.out.println("deu pau " + ex.getMessage());
+            }      
         }
     }
     

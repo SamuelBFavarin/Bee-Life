@@ -1,17 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model_agents;
 
+import behaviour.BirdAtack;
+import behaviour.BirdPeace;
+import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
 import java.io.File;
 
 /**
  *
  * @author Samuel
  */
-public class Bird {
+
+public class Bird extends Agent {
+    
+    public enum behaviour{
+        PEACE, ATACK
+    }
     
     private String path = "src/img/bird.gif";
     private File image = new File("src/img/bird.gif");
@@ -23,6 +28,7 @@ public class Bird {
     private int direction_x = 1;
     private int direction_y = -1;
     private static final int speed = 10;
+    
 
     public Bird() {
         this.height = 80;
@@ -42,6 +48,18 @@ public class Bird {
         } else {
             this.direction_x = -1;
         }
+    }
+    
+    @Override
+    protected void setup(){
+        addBehaviour(new BirdPeace(this));
+    }
+    
+    public void addBehaviourBird(behaviour tp){
+        switch (tp){
+            case ATACK: addBehaviour(new BirdAtack(this));
+            case PEACE: addBehaviour(new BirdPeace(this));
+        }           
     }
 
     public void setDirectionX(int direction) {
@@ -112,7 +130,7 @@ public class Bird {
         return this.direction_y;
     }
     
-    public String getState() {
+    public String getStateBird() {
         return this.state;
     }
     
