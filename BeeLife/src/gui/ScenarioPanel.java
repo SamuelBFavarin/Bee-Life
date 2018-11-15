@@ -17,12 +17,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import model_agents.Bee;
-import model_agents.Bird;
-import model_agents.Flower;
-import model_agents.Worm;
+import model_agents.bee.Bee;
+import model_agents.bird.Bird;
+import model_agents.flower.Flower;
+import model_agents.worm.Worm;
 
 /**
  *
@@ -401,18 +402,38 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             String nome = "Bird" + String.valueOf(i);
                     
             try {
+                /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                  COMO TINHAMOS UMA CLASSE BIRD CRIADA, A GENTE NAO PODE USAR 
+                O CREATE NEW AGENT, SENAO TERA OUTRA INSTANCIA DO JADE. AI NAO
+                ADIANTA CONDICIONAR NADA SE EXISTEM DUAS CLASSES BIRDS CRIADAS
+                DESSE MODO USEI O ACCEPT AGENT QUE AI USO A MESMA INSTANCIA
+                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1                 
+                */
                 Bird bird = new Bird(0+ (int) (Math.random()*1000) ,i + (int)(Math.random()*100)); 
-                AgentController agentBird = this.ac.createNewAgent(nome, "model_agents.Bird", null);
-                agentBird.start();
+                AgentController agentBird = this.ac.acceptNewAgent(nome, bird);
+                agentBird.start();   
                 this.birds.add(bird);
             } catch (StaleProxyException ex) {
-                System.out.println("deu pau " + ex.getMessage());
+                JOptionPane.showMessageDialog(this, "Erro em initBirds: " + ex.getMessage());
             }      
         }
     }
     
     public void initWorm(int qtd){
         for (int i = 0; i < qtd; i++){
+            
+            String name = "Worm" + String.valueOf(i);
+            
+            try {
+                Worm worm = new Worm((int) (Math.random()*1000) , 640);
+                AgentController agentWorm = this.ac.acceptNewAgent(name, worm);
+                agentWorm.start();   
+                this.worms.add(worm);
+                
+            } catch (StaleProxyException ex) {
+                JOptionPane.showMessageDialog(this, "Erro em initWorm: " + ex.getMessage());
+            }
+            
             this.worms.add(new Worm((int) (Math.random()*1000) , 640));
         }
     }
@@ -420,11 +441,6 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     // para a simulação
     public void stopSimulation(){
         this.timer.stop();
-        
-        for (int i=0; i < this.bees.size()-1; i++){
-            this.bees.get(i).killAgent();
-        }
-        
         this.bees.removeAll(bees);
         this.flowers.removeAll(flowers);
         this.birds.removeAll(birds);
