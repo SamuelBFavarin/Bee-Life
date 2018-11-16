@@ -22,12 +22,13 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import model_agents.bee.Bee;
 import model_agents.bird.Bird;
+import model_agents.controller.Environment;
 import model_agents.flower.Flower;
 import model_agents.worm.Worm;
 
 /**
  *
- * @author Samuel
+ * @author Samuel & Vinícius
  */
 public class ScenarioPanel extends JPanel implements ActionListener{
     
@@ -41,29 +42,135 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     final int hive_height = 100;
     private int hive_nectar = 0;
 
-    private Timer timer;
+    private final Timer timer;
     private final List<Bee> bees;
     private final List<Flower> flowers;
     private final List<Bird> birds;
     private final List<Worm> worms;
-    private AgentContainer ac;
+    private Environment enviroment[][];
+    private final AgentContainer ac;
 
-    
     public ScenarioPanel(AgentContainer ac) throws IOException {
         this.ac = ac;
-        this.bees = new ArrayList<Bee>();
-        this.flowers = new ArrayList<Flower>();
-        this.birds = new ArrayList<Bird>();
-        this.worms = new ArrayList<Worm>();
-                
+        this.bees = new ArrayList<>();
+        this.flowers = new ArrayList<>();
+        this.birds = new ArrayList<>();
+        this.worms = new ArrayList<>();             
         this.background = ImageIO.read(new File("src/img/jungle.jpg"));
-        this.hive = ImageIO.read(new File("src/img/hive.png"));
-        
-      
+        this.hive = ImageIO.read(new File("src/img/hive.png"));                
         this.timer = new Timer(100, this);
     }
     
-    // desenha cada agente
+    @Override
+    public void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g.create();    
+        g2d.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
+        g2d.drawImage(hive, hive_x, hive_y, hive_width, hive_height, this);
+        try {
+            this.drawBees(g2d);
+            this.drawFlowers(g2d);
+            this.drawBirds(g2d);
+            this.drawWorm(g2d);
+        } catch (IOException ex) {
+            Logger.getLogger(ScenarioPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.update();
+    }
+    
+    public void startSimulation(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
+        this.initEnvironment(getWidth(), getHeight());
+        this.initBees(qtd_bees);
+        this.initFlowers(qtd_flowers);
+        this.initBirds(qtd_birds);
+        this.initWorm(qtd_worm);
+        this.timer.start();
+    }
+    
+    public void stopSimulation(){
+        this.timer.stop();
+        this.bees.removeAll(bees);
+        this.flowers.removeAll(flowers);
+        this.birds.removeAll(birds);
+        this.worms.removeAll(worms);
+        repaint();
+    }
+    
+    public void update(){
+        moveBees();
+        moveBirds();
+        moveWorms();
+        bornNewBee();
+        repaint();
+    }
+    
+    public void initEnvironment(int x, int y){
+        this.enviroment = new Environment[x][y];
+    }
+    
+    public void initBees(int qtd){
+        for (int i = 0; i < qtd; i++){
+            String nome = "Bee" + String.valueOf(i);              
+            try {
+                Bee new_bee = new Bee(0+ (int) (Math.random()*100), 300 + i + (int)(Math.random()*100));
+                AgentController agentBird = this.ac.acceptNewAgent(nome, new_bee);
+                agentBird.start();   
+                this.bees.add(new_bee);
+                this.enviroment[new_bee.getPos_x()][new_bee.getPos_y()] = new Environment(Environment.type_agents.BEE);
+            } catch (StaleProxyException ex) {
+                JOptionPane.showMessageDialog(this, "Erro em initBees: " + ex.getMessage());
+            }  
+        }
+    }
+    
+    public void initFlowers(int qtd){
+        for (int i = 0; i < qtd; i++){
+            if (i % 2 == 0 ){
+                Flower new_flower = new Flower(i*(getWidth() / qtd),600, "F");
+                this.flowers.add(new_flower);
+                this.enviroment[new_flower.getPos_x()][new_flower.getPos_y()] = new Environment(Environment.type_agents.FLOWER);
+                
+            }else{
+                Flower new_flower = new Flower(i*(getWidth() / qtd),600, "M");
+                this.flowers.add(new_flower);  
+                this.enviroment[new_flower.getPos_x()][new_flower.getPos_y()] = new Environment(Environment.type_agents.FLOWER);
+            }
+        }
+    }
+    
+    public void initBirds(int qtd){
+        for (int i = 0; i < qtd; i++){
+            String nome = "Bird" + String.valueOf(i);                 
+            try {
+                Bird new_bird = new Bird(0+ (int) (Math.random()*1000) ,i + (int)(Math.random()*100)); 
+                AgentController agentBird = this.ac.acceptNewAgent(nome, new_bird);
+                agentBird.start();   
+                this.birds.add(new_bird);
+                this.enviroment[new_bird.getPos_x()][new_bird.getPos_y()] = new Environment(Environment.type_agents.BIRD);
+            } catch (StaleProxyException ex) {
+                JOptionPane.showMessageDialog(this, "Erro em initBirds: " + ex.getMessage());
+            }      
+        }
+    }
+    
+    public void initWorm(int qtd){
+        for (int i = 0; i < qtd; i++){
+            String name = "Worm" + String.valueOf(i);     
+            try {
+                Worm new_worm = new Worm((int) (Math.random()*1000) , 640);
+                AgentController agentWorm = this.ac.acceptNewAgent(name, new_worm);
+                agentWorm.start();   
+                this.worms.add(new_worm);
+                this.enviroment[new_worm.getPos_x()][new_worm.getPos_y()] = new Environment(Environment.type_agents.WORM);
+            } catch (StaleProxyException ex) {
+                JOptionPane.showMessageDialog(this, "Erro em initWorm: " + ex.getMessage());
+            }           
+        }
+    }
+       
     public void drawBees(Graphics2D g2d) throws IOException {
         for (int i = 0; i<this.bees.size(); i++){
             Bee bee = this.bees.get(i);
@@ -91,17 +198,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             g2d.drawImage(ImageIO.read(worm.getImage()), worm.getPos_x(), worm.getPos_y(), worm.getWidth(), worm.getHeight(), this);
         }                 
     }
-    
-    // controla a movimentação dos agentes
-    public void update(){
-        moveBees();
-        moveBirds();
-        moveWorms();
-        bornNewBee();
-        repaint();
-    }
-    
-    // funcões de movimentação e alteração de estados
+     
     public void moveBees () {
         for (int i = 0; i<this.bees.size(); i++){
             Bee bee = this.bees.get(i);
@@ -192,24 +289,19 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     
     public void moveBirds () {
          // movimentação dos pássaros
-        for (int i = 0; i<this.birds.size(); i++){
-            Bird bird = this.birds.get(i);
-            
+        for (int i = 0; i < this.birds.size(); i++){
+            Bird bird = this.birds.get(i);         
             // passaro pleno
-            if (bird.getStateBird().equals("pleno")){
-                
+            if (bird.getStateBird().equals("pleno")){              
                 // aletera o estado do pássaro para ataque
                 if (haveBeeInX(bird.getPos_x())&& Math.random()*100 > 90){
-                    bird.setState("atack");
                     bird.addBehaviourBird(Bird.behaviour.ATACK);
-                }
-                
+                }               
                 if (bird.getPos_x() > this.getWidth() || bird.getPos_x() < 0){
                     bird.setDirectionX(bird.getDirectionX() * - 1);
                 }        
                 bird.setPos_x(bird.getPos_x() + (bird.getSpeed() + (int) (Math.random()*10)) * bird.getDirectionX());
-            }
-            
+            }            
             // passaro em ataque
             if (bird.getStateBird().equals("atack")){
                 if (bird.getPos_x() > this.getWidth() || bird.getPos_x() < 0){
@@ -217,20 +309,15 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 }        
                 bird.setPos_x(bird.getPos_x() + bird.getSpeed() * bird.getDirectionX());
                 if (bird.getPos_y() > this.getHeight() - 100 || bird.getPos_y() < 10){
-                    bird.setDirectionY(bird.getDirectionY()*-1);
-                    
+                    bird.setDirectionY(bird.getDirectionY()*-1);                   
                     // altera o estado do pássaro para pleno
                     if (bird.getPos_y() < 10){
-                        bird.setState("pleno");
                         bird.addBehaviourBird(Bird.behaviour.PEACE);
                     }
                 }
-                bird.setPos_y(bird.getPos_y() - bird.getSpeed()*5 * bird.getDirectionY());
-                
-                killBee(bird.getPos_x(), bird.getPos_y());
-                
-            }
-           
+                bird.setPos_y(bird.getPos_y() - bird.getSpeed()*5 * bird.getDirectionY());          
+                killBee(bird.getPos_x(), bird.getPos_y());               
+            }          
             bird.setPos_y(bird.getPos_y());
         }
     }
@@ -295,8 +382,6 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         }
     }
     
-    
-    // verifica que existe uma flor pela posição para as abelhas
     public Flower haveFlower (int posx, int posy) {
         
         for (int i = 0; i < flowers.size(); i++){
@@ -312,7 +397,6 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         return null;
     };
     
-    // observa se existe alguma abelha no eixo x , usado por worm e por bird
     public boolean haveBeeInX (int posx){
       
         for (int i =0; i < bees.size(); i++){
@@ -325,7 +409,6 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         return false;  
     };
     
-    // tenta matar a abelha
     public boolean killBee (int posx, int posy) {
         
         for (int i =0; i < bees.size(); i++){
@@ -356,105 +439,5 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         }
         return false;
     };
-    
-    // função de sobreescrita que printa os agentes
-    @Override
-    public void paintComponent(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g.create();    
-        g2d.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
-        g2d.drawImage(hive, hive_x, hive_y, hive_width, hive_height, this);
-        try {
-            this.drawBees(g2d);
-            this.drawFlowers(g2d);
-            this.drawBirds(g2d);
-            this.drawWorm(g2d);
-        } catch (IOException ex) {
-            Logger.getLogger(ScenarioPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.update();
-    }
-    
-    // inicia os agentes em suas posições
-    public void initBees(int qtd){
-        for (int i = 0; i < qtd; i++){
-            Bee new_bee = new Bee(0+ (int) (Math.random()*100), 300 + i + (int)(Math.random()*100));
-            this.bees.add(new_bee);
-        }
-    }
-    
-    public void initFlowers(int qtd){
-        for (int i = 0; i < qtd; i++){
-            if (i % 2 == 0 ){
-                this.flowers.add(new Flower(i*(getWidth() / qtd),600, "F"));            
-            }else{
-                this.flowers.add(new Flower(i*(getWidth() / qtd),600, "M"));            
-            }
-        }
-    }
-    
-    public void initBirds(int qtd){
-        for (int i = 0; i < qtd; i++){
-            
-            String nome = "Bird" + String.valueOf(i);
-                    
-            try {
-                /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                  COMO TINHAMOS UMA CLASSE BIRD CRIADA, A GENTE NAO PODE USAR 
-                O CREATE NEW AGENT, SENAO TERA OUTRA INSTANCIA DO JADE. AI NAO
-                ADIANTA CONDICIONAR NADA SE EXISTEM DUAS CLASSES BIRDS CRIADAS
-                DESSE MODO USEI O ACCEPT AGENT QUE AI USO A MESMA INSTANCIA
-                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1                 
-                */
-                Bird bird = new Bird(0+ (int) (Math.random()*1000) ,i + (int)(Math.random()*100)); 
-                AgentController agentBird = this.ac.acceptNewAgent(nome, bird);
-                agentBird.start();   
-                this.birds.add(bird);
-            } catch (StaleProxyException ex) {
-                JOptionPane.showMessageDialog(this, "Erro em initBirds: " + ex.getMessage());
-            }      
-        }
-    }
-    
-    public void initWorm(int qtd){
-        for (int i = 0; i < qtd; i++){
-            
-            String name = "Worm" + String.valueOf(i);
-            
-            try {
-                Worm worm = new Worm((int) (Math.random()*1000) , 640);
-                AgentController agentWorm = this.ac.acceptNewAgent(name, worm);
-                agentWorm.start();   
-                this.worms.add(worm);
-                
-            } catch (StaleProxyException ex) {
-                JOptionPane.showMessageDialog(this, "Erro em initWorm: " + ex.getMessage());
-            }
-            
-            this.worms.add(new Worm((int) (Math.random()*1000) , 640));
-        }
-    }
-    
-    // para a simulação
-    public void stopSimulation(){
-        this.timer.stop();
-        this.bees.removeAll(bees);
-        this.flowers.removeAll(flowers);
-        this.birds.removeAll(birds);
-        this.worms.removeAll(worms);
-        repaint();
-    }
-    
-    // inicia a simulação
-    public void startSimulation(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
-        this.initBees(qtd_bees);
-        this.initFlowers(qtd_flowers);
-        this.initBirds(qtd_birds);
-        this.initWorm(qtd_worm);
-        this.timer.start();
-    }
-    
+              
 }

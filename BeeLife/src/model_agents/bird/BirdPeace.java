@@ -12,6 +12,7 @@ public class BirdPeace extends Behaviour {
 
     public BirdPeace(Bird bird) {
         this.bird = bird;
+        this.bird.setState("pleno");
     }    
 
     @Override

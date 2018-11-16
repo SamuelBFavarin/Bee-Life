@@ -12,6 +12,7 @@ public class BirdAtack extends Behaviour {
     
     public BirdAtack(Bird bird) {
         this.bird = bird;    
+        this.bird.setState("atack");
     }
     
     @Override
