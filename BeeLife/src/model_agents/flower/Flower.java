@@ -1,14 +1,14 @@
 package model_agents.flower;
 
+import jade.core.Agent;
 import java.io.File;
 
 /**
  *
  * @author Samuel
  */
-public class Flower {
+public class Flower extends Agent {
     
-    private String path = "src/img/flower.png";
     private File image = new File("src/img/flower.png");
     private int height;
     private int width;
@@ -37,10 +37,6 @@ public class Flower {
         }
     }
     
-    public String getPath() {
-        return path;
-    }
-
     public File getImage() {
         return image;
     }

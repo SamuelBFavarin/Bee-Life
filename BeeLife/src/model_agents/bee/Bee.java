@@ -1,14 +1,9 @@
 package model_agents.bee;
 
 import behaviour.Behaviour;
-import jade.core.AID;
 import jade.core.Agent;
-import jade.wrapper.AgentContainer;
-import jade.wrapper.StaleProxyException;
 import java.io.File;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model_agents.flower.Flower;
 
 /**
@@ -17,16 +12,12 @@ import model_agents.flower.Flower;
  */
 public class Bee extends Agent implements Behaviour{
        
-    private String path = "src/img/bee.png";
     private File image = new File("src/img/bee.png");
     private int height;
     private int width;
     private int pos_x;
     private int pos_y;
-    private static final int speed = 2;
-    private String localName;
-    private AID aid;
-    private int id;
+    private final int speed = 2;
     private int direction_x = 1;
     private int direction_y = -1;
     private String state = "search";
@@ -66,10 +57,6 @@ public class Bee extends Agent implements Behaviour{
     public boolean nearMascFlower(List<Flower> flowers){
       return false;  
     };
-       
-    public String getPath() {
-        return path;
-    }
 
     public File getImage() {
         return image;
@@ -113,10 +100,6 @@ public class Bee extends Agent implements Behaviour{
 
     public int getSpeed() {
         return speed;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getDirectionX() {

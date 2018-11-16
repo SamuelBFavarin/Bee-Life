@@ -12,7 +12,6 @@ import behaviour.Behaviour;
 public class Bird extends Agent implements Behaviour{
     
     
-    private String path = "src/img/bird.gif";
     private File image = new File("src/img/bird.gif");
     private int height;
     private int width;
@@ -21,7 +20,7 @@ public class Bird extends Agent implements Behaviour{
     private String state = "pleno";
     private int direction_x = 1;
     private int direction_y = -1;
-    private static final int speed = 10;
+    private final int speed = 10;
     
 
     public Bird() {
@@ -57,10 +56,6 @@ public class Bird extends Agent implements Behaviour{
         this.direction_y = direction;
     }
      
-    public String getPath() {
-        return path;
-    }
-
     public File getImage() {
         return image;
     }
@@ -124,8 +119,14 @@ public class Bird extends Agent implements Behaviour{
     @Override
     public void addBehaviourBird(behaviour tp) {
         switch(tp){
-            case ATACK: addBehaviour(new BirdAtack(this));
-            case PEACE: addBehaviour(new BirdPeace(this));
+            case ATACK: 
+                addBehaviour(new BirdAtack(this));
+                this.state = "atack";
+                break;
+            case PEACE: 
+                addBehaviour(new BirdPeace(this));
+                this.state = "peace";
+                break;
         }
     }
     

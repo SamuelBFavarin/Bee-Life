@@ -1,7 +1,6 @@
 package model_agents.worm;
 
 import behaviour.Behaviour;
-import jade.core.AID;
 import jade.core.Agent;
 import java.io.File;
 
@@ -11,16 +10,12 @@ import java.io.File;
  */
 public class Worm extends Agent implements Behaviour{
     
-    private String path = "src/img/worm.png";
-    private File image = new File("src/img/worm.png");
-    private int height;
-    private int width;
+    private final File image = new File("src/img/worm.png");
+    private final int height;
+    private final int width;
     private int pos_x;
     private int pos_y;
-    private static final int speed = 1;
-    private String localName;
-    private AID aid;
-    private int id;
+    private final int speed = 1;
     private int direction_x = -1;
     private int direction_y = 1;
     private String state = "search";
@@ -44,10 +39,6 @@ public class Worm extends Agent implements Behaviour{
         
     }
 
-    public AID getAid() {
-        return aid;
-    }
-
     public int getPos_x() {
         return pos_x;
     }
@@ -56,7 +47,7 @@ public class Worm extends Agent implements Behaviour{
         return pos_y;
     }
 
-    public static int getSpeed() {
+    public int getSpeed() {
         return speed;
     }
 
@@ -114,8 +105,5 @@ public class Worm extends Agent implements Behaviour{
     public void addBehaviourBird(behaviour tp) {
         
     }
-    
-    
-    
-    
+   
 }

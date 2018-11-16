@@ -49,6 +49,10 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     private final List<Worm> worms;
     private Environment enviroment[][];
     private final AgentContainer ac;
+    private final List beeNames;
+    private final List birdNames;
+    private final List flowerNames;
+    private final List wormNames;
 
     public ScenarioPanel(AgentContainer ac) throws IOException {
         this.ac = ac;
@@ -59,6 +63,10 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         this.background = ImageIO.read(new File("src/img/jungle.jpg"));
         this.hive = ImageIO.read(new File("src/img/hive.png"));                
         this.timer = new Timer(100, this);
+        this.beeNames = new ArrayList();
+        this.birdNames = new ArrayList();
+        this.flowerNames = new ArrayList();
+        this.wormNames = new ArrayList();
     }
     
     @Override
@@ -71,6 +79,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             this.drawFlowers(g2d);
             this.drawBirds(g2d);
             this.drawWorm(g2d);
+            //this.drawAgents(g2d);
         } catch (IOException ex) {
             Logger.getLogger(ScenarioPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -112,14 +121,16 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     }
     
     public void initBees(int qtd){
-        for (int i = 0; i < qtd; i++){
-            String nome = "Bee" + String.valueOf(i);              
+        for (int i = 0; i < qtd; i++){           
             try {
-                Bee new_bee = new Bee(0+ (int) (Math.random()*100), 300 + i + (int)(Math.random()*100));
-                AgentController agentBird = this.ac.acceptNewAgent(nome, new_bee);
+                int x = (0 + (int) (Math.random() * 100));
+                int y = (300 + i + (int)(Math.random() * 100));
+                Bee new_bee = new Bee(x, y);
+                this.enviroment[x][y] = new Environment(Environment.TypeAgents.BEE, new_bee, 30, 30);
+                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.BEE));
+                AgentController agentBird = this.ac.acceptNewAgent(this.enviroment[x][y].getNickName(), this.enviroment[x][y].getAgent());
                 agentBird.start();   
-                this.bees.add(new_bee);
-                this.enviroment[new_bee.getPos_x()][new_bee.getPos_y()] = new Environment(Environment.type_agents.BEE);
+                this.bees.add(new_bee);                
             } catch (StaleProxyException ex) {
                 JOptionPane.showMessageDialog(this, "Erro em initBees: " + ex.getMessage());
             }  
@@ -128,28 +139,33 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     
     public void initFlowers(int qtd){
         for (int i = 0; i < qtd; i++){
+            int x = (i * (getWidth() / qtd));
+            int y = 600;
             if (i % 2 == 0 ){
-                Flower new_flower = new Flower(i*(getWidth() / qtd),600, "F");
-                this.flowers.add(new_flower);
-                this.enviroment[new_flower.getPos_x()][new_flower.getPos_y()] = new Environment(Environment.type_agents.FLOWER);
-                
+                Flower new_flower = new Flower(x, y, "F");
+                this.enviroment[x][y] = new Environment(Environment.TypeAgents.FLOWER, new_flower, 30, 60);
+                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.FLOWER));
+                this.flowers.add(new_flower);             
             }else{
-                Flower new_flower = new Flower(i*(getWidth() / qtd),600, "M");
-                this.flowers.add(new_flower);  
-                this.enviroment[new_flower.getPos_x()][new_flower.getPos_y()] = new Environment(Environment.type_agents.FLOWER);
+                Flower new_flower = new Flower(x, y, "M");
+                this.enviroment[x][y] = new Environment(Environment.TypeAgents.FLOWER, new_flower, 30, 60);
+                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.FLOWER));
+                this.flowers.add(new_flower);              
             }
         }
     }
     
     public void initBirds(int qtd){
-        for (int i = 0; i < qtd; i++){
-            String nome = "Bird" + String.valueOf(i);                 
+        for (int i = 0; i < qtd; i++){              
             try {
-                Bird new_bird = new Bird(0+ (int) (Math.random()*1000) ,i + (int)(Math.random()*100)); 
-                AgentController agentBird = this.ac.acceptNewAgent(nome, new_bird);
+                int x = (0 + (int)(Math.random() * 1000));
+                int y = (i + (int)(Math.random() * 100));
+                Bird new_bird = new Bird(x , y); 
+                this.enviroment[x][y] = new Environment(Environment.TypeAgents.BIRD, new_bird, 80, 80);
+                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.BIRD));
+                AgentController agentBird = this.ac.acceptNewAgent(this.enviroment[x][y].getNickName(), this.enviroment[x][y].getAgent());
                 agentBird.start();   
-                this.birds.add(new_bird);
-                this.enviroment[new_bird.getPos_x()][new_bird.getPos_y()] = new Environment(Environment.type_agents.BIRD);
+                this.birds.add(new_bird);           
             } catch (StaleProxyException ex) {
                 JOptionPane.showMessageDialog(this, "Erro em initBirds: " + ex.getMessage());
             }      
@@ -157,20 +173,36 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     }
     
     public void initWorm(int qtd){
-        for (int i = 0; i < qtd; i++){
-            String name = "Worm" + String.valueOf(i);     
+        for (int i = 0; i < qtd; i++){ 
             try {
-                Worm new_worm = new Worm((int) (Math.random()*1000) , 640);
-                AgentController agentWorm = this.ac.acceptNewAgent(name, new_worm);
+                int x = ((int) (Math.random() * 1000));
+                int y = 640;
+                Worm new_worm = new Worm(x , y);
+                this.enviroment[x][y] = new Environment(Environment.TypeAgents.WORM, new_worm, 30, 30);
+                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.WORM));
+                AgentController agentWorm = this.ac.acceptNewAgent(this.enviroment[x][y].getNickName(), this.enviroment[x][y].getAgent());
                 agentWorm.start();   
-                this.worms.add(new_worm);
-                this.enviroment[new_worm.getPos_x()][new_worm.getPos_y()] = new Environment(Environment.type_agents.WORM);
+                this.worms.add(new_worm);         
             } catch (StaleProxyException ex) {
                 JOptionPane.showMessageDialog(this, "Erro em initWorm: " + ex.getMessage());
             }           
         }
     }
-       
+    
+    public void drawAgents(Graphics2D g2d)throws IOException{
+        if (this.enviroment != null){
+            if(this.enviroment.length > 0){
+                for (int x = 0; x < getWidth(); x++) {
+                    for (int y = 0; y < getHeight(); y++){
+                        if(this.enviroment[x][y] != null){
+                            g2d.drawImage(ImageIO.read(this.enviroment[x][y].getImage()), x, y, this.enviroment[x][y].getWidth(), this.enviroment[x][y].getHeight(), this);  
+                        }
+                    } 
+                }      
+            }       
+        }
+    }
+    
     public void drawBees(Graphics2D g2d) throws IOException {
         for (int i = 0; i<this.bees.size(); i++){
             Bee bee = this.bees.get(i);
@@ -288,7 +320,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     }
     
     public void moveBirds () {
-         // movimentação dos pássaros
+               
         for (int i = 0; i < this.birds.size(); i++){
             Bird bird = this.birds.get(i);         
             // passaro pleno
@@ -439,5 +471,24 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         }
         return false;
     };
+    
+    public int getNextName(Environment.TypeAgents typeAgent){
+        switch(typeAgent){
+            case BEE: 
+                beeNames.add(beeNames.size()+1);
+                return beeNames.size();
+            case BIRD:
+                birdNames.add(birdNames.size()+1);
+                return birdNames.size();
+            case FLOWER:
+                flowerNames.add(flowerNames.size()+1);
+                return flowerNames.size();
+            case WORM:
+                wormNames.add(wormNames.size()+1);
+                return wormNames.size();
+            default:
+                return -1;
+        }
+    }
               
 }
