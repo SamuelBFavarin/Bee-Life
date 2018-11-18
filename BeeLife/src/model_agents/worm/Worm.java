@@ -1,6 +1,7 @@
 package model_agents.worm;
 
 import behaviour.Behaviour;
+import static behaviour.Behaviour.behaviour.SEARCH;
 import jade.core.Agent;
 import java.io.File;
 
@@ -18,7 +19,7 @@ public class Worm extends Agent implements Behaviour{
     private final int speed = 1;
     private int direction_x = -1;
     private int direction_y = 1;
-    private String state = "search";
+    private behaviour state = SEARCH;
     public int percent_no_infect = 95;
     
     public Worm( int pos_x, int pos_y) {
@@ -59,11 +60,11 @@ public class Worm extends Agent implements Behaviour{
         return direction_y;
     }
     
-    public String getStateWorm() {
+    public behaviour getStateWorm() {
         return state;
     }
     
-    public void setStateWorm(String state){
+    public void setStateWorm(behaviour state){
         this.state = state;
     }
     

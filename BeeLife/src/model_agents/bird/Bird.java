@@ -17,7 +17,7 @@ public class Bird extends Agent implements Behaviour{
     private int width;
     private int pos_x;
     private int pos_y;
-    private String state = "pleno";
+    private behaviour state = behaviour.PEACE;
     private int direction_x = 1;
     private int direction_y = -1;
     private final int speed = 10;
@@ -96,7 +96,7 @@ public class Bird extends Agent implements Behaviour{
         this.width = width;
     }
     
-    public void setState(String state){
+    public void setState(behaviour state){
         this.state = state;
     }
 
@@ -112,7 +112,7 @@ public class Bird extends Agent implements Behaviour{
         return this.direction_y;
     }
     
-    public String getStateBird() {
+    public behaviour getStateBird() {
         return this.state;
     }
 
@@ -120,12 +120,12 @@ public class Bird extends Agent implements Behaviour{
     public void addBehaviourBird(behaviour tp) {
         switch(tp){
             case ATACK: 
+                this.state = tp;
                 addBehaviour(new BirdAtack(this));
-                this.state = "atack";
                 break;
             case PEACE: 
+                this.state = tp;
                 addBehaviour(new BirdPeace(this));
-                this.state = "peace";
                 break;
         }
     }

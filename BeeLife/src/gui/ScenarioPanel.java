@@ -1,10 +1,9 @@
 package gui;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
+import static behaviour.Behaviour.behaviour.*;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -22,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import model_agents.bee.Bee;
 import model_agents.bird.Bird;
-import model_agents.controller.Environment;
 import model_agents.flower.Flower;
 import model_agents.worm.Worm;
 
@@ -47,12 +45,12 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     private final List<Flower> flowers;
     private final List<Bird> birds;
     private final List<Worm> worms;
-    private Environment enviroment[][];
     private final AgentContainer ac;
-    private final List beeNames;
-    private final List birdNames;
-    private final List flowerNames;
-    private final List wormNames;
+    
+    int nextBee = 0;
+    int nextBird = 0;
+    int nextWorm = 0;
+    int nextFlower = 0;
 
     public ScenarioPanel(AgentContainer ac) throws IOException {
         this.ac = ac;
@@ -63,10 +61,6 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         this.background = ImageIO.read(new File("src/img/jungle.jpg"));
         this.hive = ImageIO.read(new File("src/img/hive.png"));                
         this.timer = new Timer(100, this);
-        this.beeNames = new ArrayList();
-        this.birdNames = new ArrayList();
-        this.flowerNames = new ArrayList();
-        this.wormNames = new ArrayList();
     }
     
     @Override
@@ -79,7 +73,6 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             this.drawFlowers(g2d);
             this.drawBirds(g2d);
             this.drawWorm(g2d);
-            //this.drawAgents(g2d);
         } catch (IOException ex) {
             Logger.getLogger(ScenarioPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -91,7 +84,6 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     }
     
     public void startSimulation(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
-        this.initEnvironment(getWidth(), getHeight());
         this.initBees(qtd_bees);
         this.initFlowers(qtd_flowers);
         this.initBirds(qtd_birds);
@@ -116,21 +108,16 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         repaint();
     }
     
-    public void initEnvironment(int x, int y){
-        this.enviroment = new Environment[x][y];
-    }
-    
     public void initBees(int qtd){
         for (int i = 0; i < qtd; i++){           
             try {
                 int x = (0 + (int) (Math.random() * 100));
                 int y = (300 + i + (int)(Math.random() * 100));
                 Bee new_bee = new Bee(x, y);
-                this.enviroment[x][y] = new Environment(Environment.TypeAgents.BEE, new_bee, 30, 30);
-                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.BEE));
-                AgentController agentBird = this.ac.acceptNewAgent(this.enviroment[x][y].getNickName(), this.enviroment[x][y].getAgent());
+                AgentController agentBird = this.ac.acceptNewAgent("Bee" + String.valueOf(nextBee), new_bee);
                 agentBird.start();   
-                this.bees.add(new_bee);                
+                this.bees.add(new_bee);  
+                nextBee++;
             } catch (StaleProxyException ex) {
                 JOptionPane.showMessageDialog(this, "Erro em initBees: " + ex.getMessage());
             }  
@@ -143,13 +130,9 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             int y = 600;
             if (i % 2 == 0 ){
                 Flower new_flower = new Flower(x, y, "F");
-                this.enviroment[x][y] = new Environment(Environment.TypeAgents.FLOWER, new_flower, 30, 60);
-                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.FLOWER));
                 this.flowers.add(new_flower);             
             }else{
                 Flower new_flower = new Flower(x, y, "M");
-                this.enviroment[x][y] = new Environment(Environment.TypeAgents.FLOWER, new_flower, 30, 60);
-                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.FLOWER));
                 this.flowers.add(new_flower);              
             }
         }
@@ -161,11 +144,10 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 int x = (0 + (int)(Math.random() * 1000));
                 int y = (i + (int)(Math.random() * 100));
                 Bird new_bird = new Bird(x , y); 
-                this.enviroment[x][y] = new Environment(Environment.TypeAgents.BIRD, new_bird, 80, 80);
-                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.BIRD));
-                AgentController agentBird = this.ac.acceptNewAgent(this.enviroment[x][y].getNickName(), this.enviroment[x][y].getAgent());
+                AgentController agentBird = this.ac.acceptNewAgent("Bird" + String.valueOf(nextBird), new_bird);
                 agentBird.start();   
-                this.birds.add(new_bird);           
+                this.birds.add(new_bird);
+                nextBird++;
             } catch (StaleProxyException ex) {
                 JOptionPane.showMessageDialog(this, "Erro em initBirds: " + ex.getMessage());
             }      
@@ -178,31 +160,16 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 int x = ((int) (Math.random() * 1000));
                 int y = 640;
                 Worm new_worm = new Worm(x , y);
-                this.enviroment[x][y] = new Environment(Environment.TypeAgents.WORM, new_worm, 30, 30);
-                this.enviroment[x][y].configEnvironment(getNextName(Environment.TypeAgents.WORM));
-                AgentController agentWorm = this.ac.acceptNewAgent(this.enviroment[x][y].getNickName(), this.enviroment[x][y].getAgent());
+                AgentController agentWorm = this.ac.acceptNewAgent("Worm" + String.valueOf(nextWorm), new_worm);
                 agentWorm.start();   
-                this.worms.add(new_worm);         
+                this.worms.add(new_worm);
+                nextWorm++;
             } catch (StaleProxyException ex) {
                 JOptionPane.showMessageDialog(this, "Erro em initWorm: " + ex.getMessage());
             }           
         }
     }
-    
-    public void drawAgents(Graphics2D g2d)throws IOException{
-        if (this.enviroment != null){
-            if(this.enviroment.length > 0){
-                for (int x = 0; x < getWidth(); x++) {
-                    for (int y = 0; y < getHeight(); y++){
-                        if(this.enviroment[x][y] != null){
-                            g2d.drawImage(ImageIO.read(this.enviroment[x][y].getImage()), x, y, this.enviroment[x][y].getWidth(), this.enviroment[x][y].getHeight(), this);  
-                        }
-                    } 
-                }      
-            }       
-        }
-    }
-    
+        
     public void drawBees(Graphics2D g2d) throws IOException {
         for (int i = 0; i<this.bees.size(); i++){
             Bee bee = this.bees.get(i);
@@ -234,9 +201,8 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     public void moveBees () {
         for (int i = 0; i<this.bees.size(); i++){
             Bee bee = this.bees.get(i);
-            
-            // abelhas quando plena (nunca utilizada)
-            if (bee.getStateBee().equals("pleno")){
+          
+            if (bee.getStateBee() == PEACE){
                 if (bee.getPos_x() > this.getWidth() || bee.getPos_x() < 0){
                     bee.setDirectionX(bee.getDirectionX()* -1);
                 }  
@@ -249,8 +215,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 
             }
             
-            // abelhas quando está procurando flores
-            if (bee.getStateBee().equals("search")){
+            if (bee.getStateBee() == SEARCH){
                 if (bee.getPos_x() > this.getWidth() || bee.getPos_x() < 0){
                     bee.setDirectionX(bee.getDirectionX()* -1);
                 }
@@ -262,16 +227,12 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 bee.setPos_y(bee.getPos_y() - bee.getSpeed() * bee.getDirectionY());
             }
             
-            // se encontrar flor, muda o estado para plinizando
             Flower flower = haveFlower(bee.getPos_x(), bee.getPos_y());
             if (flower != null ){
-                bee.setStateBee("pollinating");
+                bee.setStateBee(POLLINATING);
             }
-            
-            // muda de estado para voltando pra colmeia
-            if (bee.getStateBee().equals("pollinating")){
+            if (bee.getStateBee() == POLLINATING){
                 
-                // faz a polinização da flor se possível
                 if (bee.getSex_last_flower() != null){
                     if (!bee.getSex_last_flower().equals(flower.getSex())){
                         System.out.println("Reproduziu Flor");
@@ -281,11 +242,11 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 bee.setSex_last_flower(flower.getSex());
                 
                 System.out.println("Nectar colhido");
-                bee.setStateBee("going_to_hive");
+                bee.setStateBee(TO_HIVE);
             }
             
             // voltando pra colmeia movimentação
-            if (bee.getStateBee().equals("going_to_hive")){
+            if (bee.getStateBee() == TO_HIVE){
                 if (hive_x <= bee.getPos_x()){
                     bee.setPos_x(bee.getPos_x() - bee.getSpeed() *2);
                 }
@@ -303,18 +264,18 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 }
                 
                 if (isHive(bee.getPos_x(), bee.getPos_y())){
-                    bee.setStateBee("in_hive");
+                    bee.setStateBee(IN_HIVE);
                 }
             }
             
             // chegou na base e adiciona um nectar, já muda para procurando novamente
-            if (bee.getStateBee().equals("in_hive")){
+            if (bee.getStateBee() == IN_HIVE){
                 System.out.println("Nectar entregue a colmeia");
                 this.hive_nectar+=2;
                 bee.setPos_x(bee.getPos_x() + bee.getSpeed());
                 bee.setPos_y(bee.getPos_y() + bee.getSpeed());
                 bee.setDirectionY(1);
-                bee.setStateBee("search");
+                bee.setStateBee(SEARCH);
             }
         }
     }
@@ -324,7 +285,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         for (int i = 0; i < this.birds.size(); i++){
             Bird bird = this.birds.get(i);         
             // passaro pleno
-            if (bird.getStateBird().equals("pleno")){              
+            if (bird.getStateBird() == PEACE){              
                 // aletera o estado do pássaro para ataque
                 if (haveBeeInX(bird.getPos_x())&& Math.random()*100 > 90){
                     bird.addBehaviourBird(Bird.behaviour.ATACK);
@@ -335,7 +296,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 bird.setPos_x(bird.getPos_x() + (bird.getSpeed() + (int) (Math.random()*10)) * bird.getDirectionX());
             }            
             // passaro em ataque
-            if (bird.getStateBird().equals("atack")){
+            if (bird.getStateBird() == ATACK){
                 if (bird.getPos_x() > this.getWidth() || bird.getPos_x() < 0){
                     bird.setDirectionX(bird.getDirectionX() * - 1);
                 }        
@@ -359,7 +320,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             Worm worm = this.worms.get(i);
             
             // passaro pleno
-            if (worm.getStateWorm().equals("search")){
+            if (worm.getStateWorm() == SEARCH){
                 
                 if (worm.getPos_x() > this.getWidth() || worm.getPos_x() < 0){
                     worm.setDirectionX(worm.getDirectionX() * - 1);
@@ -368,25 +329,25 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 
                 Flower flower = haveFlower(worm.getPos_x(), worm.getPos_y());
                 if (flower != null && (Math.random() * 100) > worm.percent_no_infect){
-                    worm.setStateWorm("infect");
+                    worm.setStateWorm(INFECT);
                 }
             }
             
-            if (worm.getStateWorm().equals("infect")){
+            if (worm.getStateWorm() == INFECT){
                 
                 if (haveBeeInX(worm.getPos_x())){
-                    worm.setStateWorm("atack");
+                    worm.setStateWorm(ATACK);
                 }
             }
             
-            if (worm.getStateWorm().equals("atack")){   
+            if (worm.getStateWorm() == ATACK){   
                 if (worm.getPos_y() > this.getHeight() - 100 || worm.getPos_y() < this.getHeight() - 170){
                     worm.setDirectionY(worm.getDirectionY()*-1);
                     
                     killBee(worm.getPos_x(), worm.getPos_y());
                     // altera o estado do pássaro para pleno
                     if (worm.getPos_y() > this.getHeight() - 100){
-                        worm.setStateWorm("infect");
+                        worm.setStateWorm(INFECT);
                     }
                 }
                 worm.setPos_y(worm.getPos_y() - worm.getSpeed()*5 * worm.getDirectionY());
@@ -450,7 +411,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
                 if (bee.getPos_x() >= (posx - 40) && bee.getPos_x() <= (posx + 40)){
                     if (bee.getPos_y() >= (posy - 40) && bee.getPos_y() <= (posy + 40)){
                         System.out.println("abelha morta");
-                        bee.setStateBee("die");
+                        bee.setStateBee(DIE);
                         bees.remove(i);
                         return true;
                     }
@@ -471,24 +432,5 @@ public class ScenarioPanel extends JPanel implements ActionListener{
         }
         return false;
     };
-    
-    public int getNextName(Environment.TypeAgents typeAgent){
-        switch(typeAgent){
-            case BEE: 
-                beeNames.add(beeNames.size()+1);
-                return beeNames.size();
-            case BIRD:
-                birdNames.add(birdNames.size()+1);
-                return birdNames.size();
-            case FLOWER:
-                flowerNames.add(flowerNames.size()+1);
-                return flowerNames.size();
-            case WORM:
-                wormNames.add(wormNames.size()+1);
-                return wormNames.size();
-            default:
-                return -1;
-        }
-    }
-              
+                  
 }

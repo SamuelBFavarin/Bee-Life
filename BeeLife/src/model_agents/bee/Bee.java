@@ -1,6 +1,7 @@
 package model_agents.bee;
 
 import behaviour.Behaviour;
+import static behaviour.Behaviour.behaviour.SEARCH;
 import jade.core.Agent;
 import java.io.File;
 import java.util.List;
@@ -20,7 +21,7 @@ public class Bee extends Agent implements Behaviour{
     private final int speed = 2;
     private int direction_x = 1;
     private int direction_y = -1;
-    private String state = "search";
+    private behaviour state = SEARCH;
     private String sex_last_flower = null;
 
     
@@ -118,11 +119,11 @@ public class Bee extends Agent implements Behaviour{
         this.direction_y = direction_y;
     }
 
-    public String getStateBee() {
+    public behaviour getStateBee() {
         return state;
     }
 
-    public void setStateBee(String state) {
+    public void setStateBee(behaviour state) {
         this.state = state;
     }
 

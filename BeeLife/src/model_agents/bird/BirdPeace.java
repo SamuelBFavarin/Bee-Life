@@ -1,5 +1,6 @@
 package model_agents.bird;
 
+import static behaviour.Behaviour.behaviour.ATACK;
 import jade.core.behaviours.Behaviour;
 
 /**
@@ -8,11 +9,10 @@ import jade.core.behaviours.Behaviour;
  */
 public class BirdPeace extends Behaviour {
     
-    private Bird bird;
+    private final Bird bird;
 
     public BirdPeace(Bird bird) {
         this.bird = bird;
-        this.bird.setState("pleno");
     }    
 
     @Override
@@ -22,7 +22,7 @@ public class BirdPeace extends Behaviour {
 
     @Override
     public boolean done() {
-        return this.bird.getStateBird().equals("atack");
+        return (this.bird.getStateBird() == ATACK);
     }
     
 }
