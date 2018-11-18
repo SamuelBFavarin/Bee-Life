@@ -1,6 +1,6 @@
 package model_agents.bird;
 
-import static behaviour.Behaviour.behaviour.PEACE;
+import static model_agents.controller.AbstractAgent.behaviour.PEACE;
 import jade.core.behaviours.Behaviour;
 
 /**
@@ -22,7 +22,7 @@ public class BirdAtack extends Behaviour {
 
     @Override
     public boolean done() {
-       return (this.bird.getStateBird() == PEACE);
+       return (this.bird.getAbstractState() == PEACE);
     }
     
 }

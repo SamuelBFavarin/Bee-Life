@@ -1,40 +1,36 @@
 package model_agents.bee;
 
-import behaviour.Behaviour;
-import static behaviour.Behaviour.behaviour.SEARCH;
-import jade.core.Agent;
+import static model_agents.controller.AbstractAgent.behaviour.SEARCH;
 import java.io.File;
 import java.util.List;
 import model_agents.flower.Flower;
+import model_agents.controller.AbstractAgent;
+import static model_agents.controller.AbstractAgent.typeAgent.BEE;
 
 /**
  *
  * @author Samuel
  */
-public class Bee extends Agent implements Behaviour{
+public class Bee extends AbstractAgent{
        
-    private File image = new File("src/img/bee.png");
-    private int height;
-    private int width;
-    private int pos_x;
-    private int pos_y;
-    private final int speed = 2;
-    private int direction_x = 1;
-    private int direction_y = -1;
-    private behaviour state = SEARCH;
     private String sex_last_flower = null;
-
-    
-    public Bee( int pos_x, int pos_y) {
-        this.height = 30;
-        this.width = 30;
-        this.pos_x = pos_x;
-        this.pos_y = pos_y;
+   
+    public Bee(int pos_x, int pos_y) {
+        
+        super.setHeight(30);
+        super.setWidth(30);
+        super.setPos_x(pos_x);
+        super.setPos_y(pos_y);
+        super.setSpeed(2);
+        super.setDirection_y(-1);
+        super.setAbstractState(SEARCH);
+        super.setTpAgent(BEE);
+        super.setImage(new File("src/img/bee.png"));
         
         if (Math.random()*100 > 50){
-            this.direction_x = 1;
+            super.setDirection_x(1);
         } else {
-            this.direction_x = -1;
+            super.setDirection_x(-1);
         }
     }
     
@@ -59,74 +55,6 @@ public class Bee extends Agent implements Behaviour{
       return false;  
     };
 
-    public File getImage() {
-        return image;
-    }
-
-    public int getPos_x() {
-        return pos_x;
-    }
-
-    public int getPos_y() {
-        return pos_y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-    
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public void setImage(File image) {
-        this.image = image;
-    }
-
-    public void setPos_x(int pos_x) {
-        this.pos_x = pos_x;
-    }
-
-    public void setPos_y(int pos_y) {
-        this.pos_y = pos_y;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public int getDirectionX() {
-        return direction_x;
-    }
-
-    public int getDirectionY() {
-        return direction_y;
-    }
-
-    public void setDirectionX(int direction_x) {
-        this.direction_x = direction_x;
-    }
-
-    public void setDirectionY(int direction_y) {
-        this.direction_y = direction_y;
-    }
-
-    public behaviour getStateBee() {
-        return state;
-    }
-
-    public void setStateBee(behaviour state) {
-        this.state = state;
-    }
-
     public String getSex_last_flower() {
         return sex_last_flower;
     }
@@ -136,8 +64,7 @@ public class Bee extends Agent implements Behaviour{
     }
 
     @Override
-    public void addBehaviourBird(behaviour tp) {
+    public void addBehaviour(behaviour tp) {
        
-    }
-     
+    }    
 }

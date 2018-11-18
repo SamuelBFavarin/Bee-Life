@@ -1,5 +1,6 @@
 package model_agents.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import model_agents.bee.Bee;
 import model_agents.bird.Bird;
@@ -16,11 +17,11 @@ public class Environment{
     private final List<Bird> birds;
     private final List<Worm> worms;
 
-    public Environment(List<Bee> bees, List<Flower> flowers, List<Bird> birds, List<Worm> worms) {
-        this.bees = bees;
-        this.flowers = flowers;
-        this.birds = birds;
-        this.worms = worms;
+    public Environment(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm) {
+        this.bees = new ArrayList<>();
+        this.flowers = new ArrayList<>();
+        this.birds = new ArrayList<>();
+        this.worms = new ArrayList<>(); 
     }
 
     

@@ -1,37 +1,32 @@
 package model_agents.worm;
 
-import behaviour.Behaviour;
-import static behaviour.Behaviour.behaviour.SEARCH;
-import jade.core.Agent;
+import static model_agents.controller.AbstractAgent.behaviour.SEARCH;
 import java.io.File;
+import model_agents.controller.AbstractAgent;
+import static model_agents.controller.AbstractAgent.typeAgent.WORM;
 
 /**
  *
  * @author Samuel
  */
-public class Worm extends Agent implements Behaviour{
+public class Worm extends AbstractAgent{
     
-    private final File image = new File("src/img/worm.png");
-    private final int height;
-    private final int width;
-    private int pos_x;
-    private int pos_y;
-    private final int speed = 1;
-    private int direction_x = -1;
-    private int direction_y = 1;
-    private behaviour state = SEARCH;
     public int percent_no_infect = 95;
     
     public Worm( int pos_x, int pos_y) {
-        this.height = 30;
-        this.width = 30;
-        this.pos_x = pos_x;
-        this.pos_y = pos_y;
-        
+        super.setHeight(30);
+        super.setWidth(30);
+        super.setPos_x(pos_x);
+        super.setPos_y(pos_y);
+        super.setAbstractState(SEARCH);
+        super.setSpeed(1);
+        super.setDirection_y(1);
+        super.setTpAgent(WORM);
+        super.setImage(new File("src/img/worm.png"));      
         if (Math.random()*100 > 50){
-            this.direction_x = 1;
+            super.setDirection_x(1);
         } else {
-            this.direction_x = -1;
+            super.setDirection_x(-1);
         }
     }
     
@@ -40,70 +35,8 @@ public class Worm extends Agent implements Behaviour{
         
     }
 
-    public int getPos_x() {
-        return pos_x;
-    }
-
-    public int getPos_y() {
-        return pos_y;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public int getDirectionX() {
-        return direction_x;
-    }
-
-    public int getDirectionY() {
-        return direction_y;
-    }
-    
-    public behaviour getStateWorm() {
-        return state;
-    }
-    
-    public void setStateWorm(behaviour state){
-        this.state = state;
-    }
-    
-
-    public void setDirectionX(int direction_x) {
-        this.direction_x = direction_x;
-    }
-
-    public void setDirectionY(int direction_y) {
-        this.direction_y = direction_y;
-    } 
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-    
-    public File getImage() {
-        return image;
-    }
-
-    public void setPos_x(int pos_x) {
-        this.pos_x = pos_x;
-    }
-
-    public void setPos_y(int pos_y) {
-        this.pos_y = pos_y;
-    }
-    
-
-    public void setDirection_y(int direction_y) {
-        this.direction_y = direction_y;
-    }
-
     @Override
-    public void addBehaviourBird(behaviour tp) {
+    public void addBehaviour(behaviour tp) {
         
     }
    
