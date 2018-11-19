@@ -3,6 +3,7 @@ package model_agents.controller;
 import jade.JadeConfig;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
@@ -56,6 +57,24 @@ public class Environment extends Agent{
     
     @Override
     protected void setup(){
+        addBehaviour(new CyclicBehaviour() {
+            @Override
+            public void action() {
+                ACLMessage msg = receive();
+                if (msg != null){
+                    if (msg.getLanguage().equalsIgnoreCase("KILL_BEE")){
+                        String posicoes_bee[] = msg.getContent().split(",");
+                        int x = Integer.valueOf(posicoes_bee[0]);
+                        int y = Integer.valueOf(posicoes_bee[1]);
+                        if(killBee(x, y)){
+                            
+                        }
+                    }
+                }else{
+                    block();
+                }
+            }
+        });
     
     }
     
