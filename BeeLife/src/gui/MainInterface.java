@@ -1,8 +1,8 @@
 
 package gui;
-import jade.JadeConfig;
-import jade.wrapper.AgentController;
-import jade.wrapper.StaleProxyException;
+import gui.ConfiguratePanel.Status;
+import static gui.ConfiguratePanel.Status.START;
+import static gui.ConfiguratePanel.Status.STOP;
 import java.awt.*;
 import java.io.IOException;
 import javax.swing.*;
@@ -13,27 +13,17 @@ import javax.swing.*;
  */
 public class MainInterface {
     
-    String status = "";
+    Status status;
 
     public MainInterface() throws HeadlessException, IOException {
-        
-        //configuracoes do ambiente jade
-        JadeConfig jade_config = new JadeConfig("127.0.0.1", "1199");
-        //Criaçao do jade tools para visualizar os agentes        
-        try {
-            AgentController rma = jade_config.getAgent_controler().createNewAgent("rma", "jade.tools.rma.rma", null);
-            rma.start();
-        } catch(StaleProxyException e) {
-            System.out.println("Erro ao criar/startar o agente do Jade Tools: " + e.getMessage());
-        }
-        
+               
         // configuração gráfica
         JFrame  frame  = new JFrame("Bee Life");
         frame.setSize(1500, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         ConfiguratePanel configuratePanel = new ConfiguratePanel();
-        ScenarioPanel scenarioPanel = new ScenarioPanel(jade_config.getAgent_controler());
+        ScenarioPanel scenarioPanel = new ScenarioPanel();
         frame.add(configuratePanel, BorderLayout.WEST);
         frame.add(scenarioPanel, BorderLayout.CENTER);
         frame.setVisible(true);
@@ -43,7 +33,7 @@ public class MainInterface {
             boolean alter_status = this.altetStatus(configuratePanel.getStatus());
             
             if (alter_status){
-                if (this.status == "start"){
+                if (this.status == START){
                     scenarioPanel.startSimulation(
                         configuratePanel.getInputBees(),
                         configuratePanel.getInputFlower(),
@@ -51,7 +41,7 @@ public class MainInterface {
                         configuratePanel.getInputWorm()
                     );
                 }
-                if (this.status == "stop"){
+                if (this.status == STOP){
                     scenarioPanel.stopSimulation();
                 }
             }
@@ -59,7 +49,7 @@ public class MainInterface {
         }
     }
     
-    private boolean altetStatus (String status_now){
+    private boolean altetStatus (Status status_now){
         System.out.print("");
         if (status_now != this.status){
             this.status = status_now;

@@ -16,8 +16,9 @@ public class BirdPeace extends Behaviour {
     }    
 
     @Override
-    public void action() {
-        System.out.println("Bird: " + this.bird.getAID().getName()+ " | Voando plenamente!");
+    public void action() {                      
+        //bird.setPos_x(bird.getPos_x() + (bird.getSpeed() + (int) (Math.random()*10)) * bird.getDirection_x());
+        //System.out.println("Bird: " + this.bird.getAID().getName()+ " | Voando plenamente!");
     }
 
     @Override

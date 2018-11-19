@@ -10,7 +10,7 @@ import java.io.File;
 public class AbstractAgent extends Agent{
    
     public enum typeAgent{
-        BEE, BIRD, FLOWER, WORM
+        BEE, BIRD, FLOWER, WORM, HIVE
     }
     public enum behaviour{
         PEACE, ATACK, SEARCH, POLLINATING, TO_HIVE, IN_HIVE, INFECT, DIE
