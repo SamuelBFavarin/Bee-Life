@@ -4,7 +4,8 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
-import static model_agents.controller.AbstractAgent.behaviour.ATACK;
+import static model_agents.controller.AbstractAgent.behaviour.GO_ATACK;
+import static model_agents.controller.AbstractAgent.behaviour.PEACE;
 
 /**
  *
@@ -21,30 +22,29 @@ public class BirdPeace extends Behaviour{
 
     @Override
     public void action() {
-       
-        ACLMessage msg = myAgent.receive();
-        if (msg != null){
-                        
-            if (msg.getContent().equalsIgnoreCase("BEE_IN_X")){
-                if (Math.random()*100 > 90){
-                    //bird.removeBehaviour(this);
-                    //bird.setAbstractState(ATACK);
-                    //bird.addBehaviour(new BirdAtack(bird));
-                }
-            }
-            
-            if (bird.getPos_x() > bird.getEnvironment().getWidth() || bird.getPos_x() < 0){
-                bird.setDirection_x(bird.getDirection_x() * - 1);
-            }        
-            
-            bird.setPos_x(bird.getPos_x() + (bird.getSpeed() + (int) (Math.random()*10)) * bird.getDirection_x());
-            bird.setPos_y(bird.getPos_y());
+        
+        if (bird.getAbstractState().equals(PEACE)){
+            ACLMessage msg = myAgent.receive();
+            if (msg != null){
+
+                if (bird.getPos_x() > bird.getEnvironment().getWidth() || bird.getPos_x() < 0){
+                    bird.setDirection_x(bird.getDirection_x() * - 1);
+                }        
+                bird.setPos_x(bird.getPos_x() + (bird.getSpeed() + (int) (Math.random()*10)) * bird.getDirection_x());
+                bird.setPos_y(bird.getPos_y()); 
+
+                if (msg.getContent().equalsIgnoreCase("GO_ATACK")){
+                    if (Math.random()*100 > 90){
+                        bird.setAbstractState(GO_ATACK);
+                    }
+                }            
+            }   
         }
     }
 
     @Override
     public boolean done() {
-        return (bird.getAbstractState().equals(ATACK));
+        return false; //(bird.getAbstractState().equals(ATACK));
     }
 
 }

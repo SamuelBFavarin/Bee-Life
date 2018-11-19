@@ -12,7 +12,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import model_agents.bee.Bee;
 import model_agents.bird.Bird;
-import model_agents.bird.BirdAtack;
+import model_agents.bird.BirdBackAtack;
+import model_agents.bird.BirdGoAtack;
 import model_agents.bird.BirdPeace;
 import static model_agents.controller.AbstractAgent.behaviour.*;
 import model_agents.controller.AbstractAgent.typeAgent;
@@ -118,6 +119,8 @@ public class Environment extends Agent{
                 String nickname = nextAgentName(typeAgent.BIRD);
                 new_bird.setNickName(nickname);
                 new_bird.addBehaviour(new BirdPeace(new_bird));
+                new_bird.addBehaviour(new BirdGoAtack(new_bird, 100));
+                new_bird.addBehaviour(new BirdBackAtack(new_bird, 100));
                 AgentController agentBird = this.ac.acceptNewAgent(nickname, new_bird);
                 agentBird.start();   
                 this.birds.add(new_bird);
@@ -215,15 +218,12 @@ public class Environment extends Agent{
                     if (bird.getAbstractState() == PEACE){
                         ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
                         if (haveBeeInX(bird.getPos_x())){
-                            msg.setContent("BEE_IN_X");
+                            msg.setContent("GO_ATACK");
                         }else{
                             msg.setContent("PEACE");
                         }
                         msg.addReceiver(new AID(bird.getLocalName(), AID.ISLOCALNAME));
                         send(msg);
-                    }
-                    if (bird.getAbstractState() == ATACK){
-                        //bird.addBehaviour(new BirdAtack(bird));
                     }
                     break;
                 case FLOWER:
@@ -243,10 +243,10 @@ public class Environment extends Agent{
                     }
                     if (worm.getAbstractState() == INFECT){
                         if (haveBeeInX(worm.getPos_x())){
-                            worm.setAbstractState(ATACK);
+                            worm.setAbstractState(GO_ATACK);
                         }
                     }
-                    if (worm.getAbstractState() == ATACK){   
+                    if (worm.getAbstractState() == GO_ATACK){   
                         if (worm.getPos_y() > this.height - 100 || worm.getPos_y() < this.height - 170){
                             worm.setDirection_y(worm.getDirection_y() * -1);
                             killBee(worm.getPos_x(), worm.getPos_y());

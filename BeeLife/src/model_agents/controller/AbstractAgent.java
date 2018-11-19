@@ -12,7 +12,7 @@ public interface AbstractAgent{
         BEE, BIRD, FLOWER, WORM, HIVE
     }
     public enum behaviour{
-        PEACE, ATACK, SEARCH, POLLINATING, TO_HIVE, IN_HIVE, INFECT, DIE
+        PEACE, GO_ATACK, BACK_ATACK, SEARCH, POLLINATING, TO_HIVE, IN_HIVE, INFECT, DIE
     }
     
     public typeAgent getTpAgent();
