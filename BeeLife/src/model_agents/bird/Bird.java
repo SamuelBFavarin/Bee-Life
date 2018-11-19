@@ -1,65 +1,177 @@
 package model_agents.bird;
 
+import jade.core.Agent;
 import model_agents.controller.AbstractAgent;
-import model_agents.controller.AbstractAgent.behaviour;
 import static model_agents.controller.AbstractAgent.behaviour.PEACE;
 import static model_agents.controller.AbstractAgent.typeAgent.BIRD;
 import java.io.File;
+import model_agents.controller.AbstractAgent.behaviour;
+import model_agents.controller.AbstractAgent.typeAgent;
+import model_agents.controller.Environment;
 
 /**
  *
  * @author Samuel
  */
 
-public class Bird extends AbstractAgent{
+public class Bird extends Agent implements AbstractAgent{
+    
+    private File image;
+    private int height;
+    private int width;
+    private int pos_x;
+    private int pos_y;
+    private behaviour state;
+    private typeAgent tpAgent;
+    private int direction_x;
+    private int direction_y;
+    private int speed;
+    private Environment environment;
+    private String nickName;
     
     public Bird() {
-        super.setHeight(80);
-        super.setWidth(80);
-        super.setPos_x(0);
-        super.setPos_y(0);
-        super.setSpeed(10);
-        super.setDirection_y(-1);
-        super.setAbstractState(PEACE);
-        super.setTpAgent(BIRD);
-        super.setImage(new File("src/img/bird.gif"));
+        this.height = 80;
+        this.width = 80;
+        this.pos_x = 0;
+        this.pos_y = 0;
+        this.speed = 10;
+        this.direction_y = -1;
+        this.state = PEACE;
+        this.tpAgent = BIRD;
+        this.image = new File("src/img/bird.gif");
     }
     
     public Bird(int pos_x, int pos_y) {
-        super.setHeight(80);
-        super.setWidth(80);
-        super.setPos_x(pos_x);
-        super.setPos_y(pos_y);
-        super.setSpeed(10);
-        super.setDirection_y(-1);
-        super.setAbstractState(PEACE);
-        super.setTpAgent(BIRD);
-        super.setImage(new File("src/img/bird.gif"));
+        this.height = 80;
+        this.width = 80;
+        this.pos_x = pos_x;
+        this.pos_y = pos_y;
+        this.speed = 10;
+        this.direction_y = -1;
+        this.state = PEACE;
+        this.tpAgent = BIRD;
+        this.image = new File("src/img/bird.gif");
         
         if (Math.random()*100 > 50){
-            super.setDirection_x(1);
+            this.direction_x = 1;
         } else {
-            super.setDirection_x(-1);
+            this.direction_x = -1;
         }
     }
     
     @Override
     protected void setup(){
-       
+              
     }
-    
+
     @Override
-    public void addBehaviour(behaviour tp) {
-        switch(tp){
-            case ATACK: 
-                setAbstractState(tp);
-                addBehaviour(new BirdAtack(this));
-                break;
-            case PEACE: 
-                setAbstractState(tp);
-                addBehaviour(new BirdPeace(this));
-                break;
-        }
+    public File getImage() {
+        return image;
     }
+
+    public void setImage(File image) {
+        this.image = image;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    @Override
+    public int getPos_x() {
+        return pos_x;
+    }
+
+    public void setPos_x(int pos_x) {
+        this.pos_x = pos_x;
+    }
+
+    @Override
+    public int getPos_y() {
+        return pos_y;
+    }
+
+    public void setPos_y(int pos_y) {
+        this.pos_y = pos_y;
+    }
+
+    @Override
+    public behaviour getAbstractState() {
+        return state;
+    }
+
+    public void setState(behaviour state) {
+        this.state = state;
+    }
+
+    @Override
+    public typeAgent getTpAgent() {
+        return tpAgent;
+    }
+
+    @Override
+    public void setTpAgent(typeAgent tpAgent) {
+        this.tpAgent = tpAgent;
+    }
+
+    public int getDirection_x() {
+        return direction_x;
+    }
+
+    public void setDirection_x(int direction_x) {
+        this.direction_x = direction_x;
+    }
+
+    public int getDirection_y() {
+        return direction_y;
+    }
+
+    public void setDirection_y(int direction_y) {
+        this.direction_y = direction_y;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    @Override
+    public void setAbstractState(behaviour state) {
+        this.state = state;
+    }
+
     
 }

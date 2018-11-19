@@ -1,7 +1,9 @@
 package model_agents.controller;
 
 import jade.JadeConfig;
+import jade.core.AID;
 import jade.core.Agent;
+import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
@@ -10,7 +12,10 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import model_agents.bee.Bee;
 import model_agents.bird.Bird;
+import model_agents.bird.BirdAtack;
+import model_agents.bird.BirdPeace;
 import static model_agents.controller.AbstractAgent.behaviour.*;
+import model_agents.controller.AbstractAgent.typeAgent;
 import model_agents.flower.Flower;
 import model_agents.hive.Hive;
 import model_agents.worm.Worm;
@@ -28,6 +33,12 @@ public class Environment extends Agent{
     private final AgentContainer ac;
     private final int width;
     private final int height;
+    private int envCreated;
+    
+    private int nextBee;
+    private int nextFlower;
+    private int nextBird;
+    private int nextWorm;
     
     public Environment(int height, int width) {
         JadeConfig jade_config = new JadeConfig("127.0.0.1", "1199");
@@ -35,16 +46,44 @@ public class Environment extends Agent{
         this.hive = new Hive();
         this.height = height;
         this.width = width;
+        this.envCreated = 0;
+        this.nextBee = 0;
+        this.nextFlower = 0;
+        this.nextBird = 0;
+        this.nextWorm = 0;
+    }
+    
+    @Override
+    protected void setup(){
+    
     }
     
     public void configAgents(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
+        
+        //Cria o ambiente apenas 1 vez, preciso dele para enviar/receber mensagens
+        if (this.envCreated == 0){
+            try {
+                
+                AgentController rma = this.ac.createNewAgent("rma", "jade.tools.rma.rma", null);
+                rma.start();
+                
+                AgentController agentEnvironment = this.ac.acceptNewAgent("Environment", this);
+                agentEnvironment.start();   
+                this.envCreated = 1;
+                } catch (StaleProxyException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro em iniciar o Environment: " + ex.getMessage());
+            } 
+        }
         
         for (int i = 0; i < qtd_bees; i++){           
             try {
                 int x = (0 + (int) (Math.random() * 100));
                 int y = (300 + i + (int)(Math.random() * 100));
                 Bee new_bee = new Bee(x, y);
-                AgentController agentBird = this.ac.acceptNewAgent("Bee" + String.valueOf(this.bees.size()+1), new_bee);
+                new_bee.setEnvironment(this);
+                String nickname = nextAgentName(typeAgent.BEE);
+                new_bee.setNickName(nickname);
+                AgentController agentBird = this.ac.acceptNewAgent(nickname, new_bee);
                 agentBird.start();   
                 this.bees.add(new_bee);
             } catch (StaleProxyException ex) {
@@ -57,9 +96,15 @@ public class Environment extends Agent{
             int y = 600;
             if (i % 2 == 0 ){
                 Flower new_flower = new Flower(x, y, "F");
+                new_flower.setEnvironment(this);
+                String nickname = nextAgentName(typeAgent.FLOWER);
+                new_flower.setNickName(nickname);
                 this.flowers.add(new_flower);
             }else{
                 Flower new_flower = new Flower(x, y, "M");
+                new_flower.setEnvironment(this);
+                String nickname = nextAgentName(typeAgent.FLOWER);
+                new_flower.setNickName(nickname);
                 this.flowers.add(new_flower);
             }
         }
@@ -69,7 +114,11 @@ public class Environment extends Agent{
                 int x = (0 + (int)(Math.random() * 1000));
                 int y = (i + (int)(Math.random() * 100));
                 Bird new_bird = new Bird(x , y); 
-                AgentController agentBird = this.ac.acceptNewAgent("Bird" + String.valueOf(this.birds.size()+1), new_bird);
+                new_bird.setEnvironment(this);
+                String nickname = nextAgentName(typeAgent.BIRD);
+                new_bird.setNickName(nickname);
+                new_bird.addBehaviour(new BirdPeace(new_bird));
+                AgentController agentBird = this.ac.acceptNewAgent(nickname, new_bird);
                 agentBird.start();   
                 this.birds.add(new_bird);
             } catch (StaleProxyException ex) {
@@ -82,20 +131,16 @@ public class Environment extends Agent{
                 int x = ((int) (Math.random() * 1000));
                 int y = 640;
                 Worm new_worm = new Worm(x , y);
-                AgentController agentWorm = this.ac.acceptNewAgent("Worm" + String.valueOf(this.worms.size()+1), new_worm);
-                agentWorm.start();   
+                new_worm.setEnvironment(this);
+                String nickname = nextAgentName(typeAgent.WORM);
+                new_worm.setNickName(nickname);
+                AgentController agentWorm = this.ac.acceptNewAgent(nickname, new_worm);
+                agentWorm.start();            
                 this.worms.add(new_worm);
             } catch (StaleProxyException ex) {
                 JOptionPane.showMessageDialog(null, "Erro em iniciar os Worms: " + ex.getMessage());
             }           
         }    
-        
-        try {
-            AgentController rma = this.ac.createNewAgent("rma", "jade.tools.rma.rma", null);
-            rma.start();
-        } catch(StaleProxyException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao criar/startar o agente do Jade Tools: " + e.getMessage());
-        }
     }   
     
     public void moveAgents(){
@@ -167,35 +212,19 @@ public class Environment extends Agent{
                     break;
                 case BIRD:
                     Bird bird = (Bird) agents.get(i);         
-                    // passaro pleno
-                    if (bird.getAbstractState() == PEACE){              
-                        // aletera o estado do pássaro para ataque
-                        if (haveBeeInX(bird.getPos_x())&& Math.random()*100 > 90){
-                            bird.addBehaviour(Bird.behaviour.ATACK);
-                        }               
-                        if (bird.getPos_x() > this.width || bird.getPos_x() < 0){
-                            bird.setDirection_x(bird.getDirection_x() * - 1);
-                            
-                        }        
-                        bird.setPos_x(bird.getPos_x() + (bird.getSpeed() + (int) (Math.random()*10)) * bird.getDirection_x());
-                    }            
-                    // passaro em ataque
-                    if (bird.getAbstractState() == ATACK){
-                        if (bird.getPos_x() > this.width || bird.getPos_x() < 0){
-                            bird.setDirection_x(bird.getDirection_x() * - 1);
-                        }        
-                        bird.setPos_x(bird.getPos_x() + bird.getSpeed() * bird.getDirection_x());
-                        if (bird.getPos_y() > this.height - 100 || bird.getPos_y() < 10){
-                            bird.setDirection_y(bird.getDirection_y()*-1);                   
-                            // altera o estado do pássaro para pleno
-                            if (bird.getPos_y() < 10){
-                                bird.addBehaviour(Bird.behaviour.PEACE);
-                            }
+                    if (bird.getAbstractState() == PEACE){
+                        ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
+                        if (haveBeeInX(bird.getPos_x())){
+                            msg.setContent("BEE_IN_X");
+                        }else{
+                            msg.setContent("PEACE");
                         }
-                        bird.setPos_y(bird.getPos_y() - bird.getSpeed()*5 * bird.getDirection_y());          
-                        killBee(bird.getPos_x(), bird.getPos_y());               
-                    }          
-                    bird.setPos_y(bird.getPos_y());
+                        msg.addReceiver(new AID(bird.getLocalName(), AID.ISLOCALNAME));
+                        send(msg);
+                    }
+                    if (bird.getAbstractState() == ATACK){
+                        //bird.addBehaviour(new BirdAtack(bird));
+                    }
                     break;
                 case FLOWER:
                     break;
@@ -311,4 +340,37 @@ public class Environment extends Agent{
         return hive;
     }
     
+    public String nextAgentName(typeAgent agent){
+        String name = "";
+        switch(agent){
+            case BEE:
+                name = "Bee" + String.valueOf(nextBee); 
+                nextBee++;
+                return name;
+            case BIRD:
+                name = "Bird" + String.valueOf(nextBird);
+                nextBird++;
+                return name;
+            case FLOWER:
+                name = "Flower" + String.valueOf(nextFlower);
+                nextFlower++;
+                return name;
+            case HIVE:
+                break;
+            case WORM:
+                name = "Worm" + String.valueOf(nextWorm);
+                nextWorm++;
+                return name;
+        }        
+        return name;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+       
  }
