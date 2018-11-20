@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model_agents.bee.Bee;
+import model_agents.bee.BeeInHive;
+import model_agents.bee.BeePollinate;
+import model_agents.bee.BeeSearch;
+import model_agents.bee.BeeToHive;
 import model_agents.bird.Bird;
 import model_agents.bird.BirdBackAtack;
 import model_agents.bird.BirdGoAtack;
@@ -62,12 +66,16 @@ public class Environment extends Agent{
             public void action() {
                 ACLMessage msg = receive();
                 if (msg != null){
-                    if (msg.getLanguage().equalsIgnoreCase("KILL_BEE")){
-                        String posicoes_bee[] = msg.getContent().split(",");
-                        int x = Integer.valueOf(posicoes_bee[0]);
-                        int y = Integer.valueOf(posicoes_bee[1]);
-                        if(killBee(x, y)){
-                            
+                    if (msg.getOntology().equalsIgnoreCase("BIRD_ONTOLOGY")){
+                        if(msg.getLanguage().equalsIgnoreCase("KILL_BEE")){
+                            String posicoes_bee[] = msg.getContent().split(",");
+                            int x = Integer.valueOf(posicoes_bee[0]);
+                            int y = Integer.valueOf(posicoes_bee[1]);
+                            killBee(x, y);
+                        }
+                    }else if(msg.getOntology().equalsIgnoreCase("BEE_ONTOLOGY")){
+                        if(msg.getContent().equalsIgnoreCase("BORN_NEW_FLOWER")){
+                            bornNewFlower();
                         }
                     }
                 }else{
@@ -103,6 +111,10 @@ public class Environment extends Agent{
                 new_bee.setEnvironment(this);
                 String nickname = nextAgentName(typeAgent.BEE);
                 new_bee.setNickName(nickname);
+                new_bee.addBehaviour(new BeeSearch(new_bee, 100));
+                new_bee.addBehaviour(new BeePollinate(new_bee, 100));
+                new_bee.addBehaviour(new BeeToHive(new_bee, 100));
+                new_bee.addBehaviour(new BeeInHive(new_bee, 100));
                 AgentController agentBird = this.ac.acceptNewAgent(nickname, new_bee);
                 agentBird.start();   
                 this.bees.add(new_bee);
@@ -137,7 +149,7 @@ public class Environment extends Agent{
                 new_bird.setEnvironment(this);
                 String nickname = nextAgentName(typeAgent.BIRD);
                 new_bird.setNickName(nickname);
-                new_bird.addBehaviour(new BirdPeace(new_bird));
+                new_bird.addBehaviour(new BirdPeace(new_bird, 100));
                 new_bird.addBehaviour(new BirdGoAtack(new_bird, 100));
                 new_bird.addBehaviour(new BirdBackAtack(new_bird, 100));
                 AgentController agentBird = this.ac.acceptNewAgent(nickname, new_bird);
@@ -171,79 +183,10 @@ public class Environment extends Agent{
         for (int i = 0; i < agents.size(); i++){
             switch(agents.get(i).getTpAgent()){
                 case BEE:
-                    Bee bee = this.bees.get(i);
-                    if (bee.getAbstractState() == PEACE){
-                        if (bee.getPos_x() > this.width || bee.getPos_x() < 0){
-                            bee.setDirection_x(bee.getDirection_x() * -1);
-                        }  
-                        bee.setPos_x(bee.getPos_x() + (bee.getSpeed() + (int) (Math.random()*10)) * bee.getDirection_x());
-                        if (bee.getPos_y() > this.height - 200 || bee.getPos_y() < 400 ){
-                            bee.setDirection_y(bee.getDirection_y() * -1);
-                        }
-                        bee.setPos_y(bee.getPos_y() - bee.getSpeed() * bee.getDirection_y());
-                    }           
-                    if (bee.getAbstractState() == SEARCH){
-                        if (bee.getPos_x() > this.width || bee.getPos_x() < 0){
-                            bee.setDirection_x(bee.getDirection_x() * -1);
-                        }
-                        bee.setPos_x(bee.getPos_x() + (bee.getSpeed() + (int) (Math.random()*10)) * bee.getDirection_x()); 
-                        if (bee.getPos_y() > this.height - 50 || bee.getPos_y() < 300 ){
-                            bee.setDirection_y(bee.getDirection_y() * -1);
-                        }
-                        bee.setPos_y(bee.getPos_y() - bee.getSpeed() * bee.getDirection_y());
-                    }     
-                    Flower flower = haveFlower(bee.getPos_x(), bee.getPos_y());
-                    if (flower != null ){
-                        bee.setAbstractState(POLLINATING);
-                    }
-                    if (bee.getAbstractState() == POLLINATING){   
-                        if (bee.getSex_last_flower() != null){
-                            if (!bee.getSex_last_flower().equals(flower.getSex())){
-                                this.bornNewFlower();
-                            }
-                        }
-                        bee.setSex_last_flower(flower.getSex());
-                        bee.setAbstractState(TO_HIVE);
-                    }
-                    // voltando pra colmeia movimentação
-                    if (bee.getAbstractState() == TO_HIVE){
-                        if (hive.getPos_x() <= bee.getPos_x()){
-                            bee.setPos_x(bee.getPos_x() - bee.getSpeed() *2);
-                        }
-                        if (hive.getPos_x() >= bee.getPos_x()){
-                            bee.setPos_x(bee.getPos_x() + bee.getSpeed() *2);
-                        }
-                        if (hive.getPos_y() <= bee.getPos_y()){
-                            bee.setPos_y(bee.getPos_y() - bee.getSpeed() *2);
-                        }
-                        if (hive.getPos_x() >= bee.getPos_y()){
-                            bee.setPos_y(bee.getPos_y() + bee.getSpeed() *2);
-                        }
-                        if (isHive(bee.getPos_x(), bee.getPos_y())){
-                            bee.setAbstractState(IN_HIVE);
-                        }
-                    } 
-                    // chegou na base e adiciona um nectar, já muda para procurando novamente
-                    if (bee.getAbstractState() == IN_HIVE){
-                        this.hive.hive_nectar+=2;
-                        bee.setPos_x(bee.getPos_x() + bee.getSpeed());
-                        bee.setPos_y(bee.getPos_y() + bee.getSpeed());
-                        bee.setDirection_y(1);
-                        bee.setAbstractState(SEARCH);
-                    }
+                    moveBee((Bee) agents.get(i));
                     break;
                 case BIRD:
-                    Bird bird = (Bird) agents.get(i);         
-                    if (bird.getAbstractState() == PEACE){
-                        ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
-                        if (haveBeeInX(bird.getPos_x())){
-                            msg.setContent("GO_ATACK");
-                        }else{
-                            msg.setContent("PEACE");
-                        }
-                        msg.addReceiver(new AID(bird.getLocalName(), AID.ISLOCALNAME));
-                        send(msg);
-                    }
+                    moveBird((Bird) agents.get(i));
                     break;
                 case FLOWER:
                     break;
@@ -279,6 +222,52 @@ public class Environment extends Agent{
             }       
         }   
         
+    }
+    
+    public void moveBird(Bird bird){     
+        if (bird.getAbstractState() == PEACE){
+            ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
+            msg.setOntology("BIRD_ONTOLOGY");
+            msg.setLanguage("BIRD_LANGUAGE");
+            if (haveBeeInX(bird.getPos_x())){
+                msg.setContent("GO_ATACK");
+            }else{
+                msg.setContent("PEACE");
+            }
+            msg.addReceiver(new AID(bird.getLocalName(), AID.ISLOCALNAME));
+            send(msg);
+        }    
+    }
+    
+    public void moveBee(Bee bee){
+        
+        if (bee.getAbstractState().equals(SEARCH)){                 
+            ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
+            msg.setOntology("BEE_ONTOLOGY");
+            msg.setLanguage("BEE_LANGUAGE");
+            Flower flower = haveFlower(bee.getPos_x(), bee.getPos_y());
+            if (flower != null ){
+                bee.setCurrent_flower(flower);
+                msg.setContent("POLLINATING");
+            }else{
+                msg.setContent("SEARCH");
+            }
+            msg.addReceiver(new AID(bee.getLocalName(), AID.ISLOCALNAME));
+            send(msg);
+        }
+        
+        if (bee.getAbstractState() == TO_HIVE){
+            ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
+            msg.setOntology("BEE_ONTOLOGY");
+            msg.setLanguage("BEE_LANGUAGE");   
+            if(isHive(bee.getPos_x(), bee.getPos_y())){
+                msg.setContent("IN_HIVE");
+            }else{
+                msg.setContent("TO_HIVE");
+            }
+            msg.addReceiver(new AID(bee.getLocalName(), AID.ISLOCALNAME));
+            send(msg);
+        } 
     }
     
     public List getAllAgents(){

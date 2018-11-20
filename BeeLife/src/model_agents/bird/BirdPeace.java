@@ -11,20 +11,20 @@ import static model_agents.controller.AbstractAgent.behaviour.PEACE;
  *
  * @author Vinícius Machado
  */
-public class BirdPeace extends Behaviour{
+public class BirdPeace extends TickerBehaviour{
     
     private Bird bird;
 
-    public BirdPeace(Agent a) {
-        super(a);
+    public BirdPeace(Agent a, long period) {
+        super(a, period);
         this.bird = (Bird) a;
     }
 
+
     @Override
-    public void action() {
-        
+    protected void onTick() {
         if (bird.getAbstractState().equals(PEACE)){
-            ACLMessage msg = myAgent.receive();
+            ACLMessage msg = bird.receive();
             if (msg != null){
 
                 if (bird.getPos_x() > bird.getEnvironment().getWidth() - 50 || bird.getPos_x() < 50){
@@ -41,10 +41,4 @@ public class BirdPeace extends Behaviour{
             }   
         }
     }
-
-    @Override
-    public boolean done() {
-        return false; //(bird.getAbstractState().equals(ATACK));
-    }
-
 }

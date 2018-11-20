@@ -49,9 +49,10 @@ public class BirdGoAtack extends TickerBehaviour {
         }                
     }
     
-    public boolean sendKillBee(int x, int y){
+    private boolean sendKillBee(int x, int y){
         ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
-        msg.setLanguage("KILL_BEE");
+        msg.setOntology("BIRD_ONTOLOGY");
+        msg.setLanguage("KILL_BEE");       
         String content = String.valueOf(x) + "," + String.valueOf(y);
         msg.setContent(content);
         msg.addReceiver(new AID(bird.getEnvironment().getLocalName(), AID.ISLOCALNAME));

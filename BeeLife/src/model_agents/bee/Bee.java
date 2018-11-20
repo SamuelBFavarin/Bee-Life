@@ -16,7 +16,9 @@ import model_agents.controller.Environment;
  * @author Samuel
  */
 public class Bee extends Agent implements AbstractAgent{
-       
+    
+    private Flower current_flower = null;
+    private Flower last_flower = null;
     private String sex_last_flower = null;
     private File image;
     private int height;
@@ -192,6 +194,21 @@ public class Bee extends Agent implements AbstractAgent{
             this.image = new File("src/img/bee2.png");
         }
     }
-    
+
+    public Flower getCurrent_flower() {
+        return current_flower;
+    }
+
+    public void setCurrent_flower(Flower current_flower) {
+        this.current_flower = current_flower;
+    }
+
+    public Flower getLast_flower() {
+        return last_flower;
+    }
+
+    public void setLast_flower(Flower last_flower) {
+        this.last_flower = last_flower;
+    }     
   
 }

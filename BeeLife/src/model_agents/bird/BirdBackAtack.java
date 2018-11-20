@@ -1,9 +1,7 @@
 package model_agents.bird;
 
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.TickerBehaviour;
-import jade.lang.acl.ACLMessage;
 import static model_agents.controller.AbstractAgent.behaviour.BACK_ATACK;
 import static model_agents.controller.AbstractAgent.behaviour.PEACE;
 
@@ -43,7 +41,6 @@ public class BirdBackAtack extends TickerBehaviour {
                 bird.setAbstractState(PEACE);
             }
         }                
-        //killBee(bird.getPos_x(), bird.getPos_y()); 
     }
 
     
