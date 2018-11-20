@@ -145,6 +145,7 @@ public class Bee extends Agent implements AbstractAgent{
     }
 
     public int getDirection_x() {
+        this.alterImageDirection();
         return direction_x;
     }
 
@@ -184,6 +185,13 @@ public class Bee extends Agent implements AbstractAgent{
         this.nickName = nickName;
     }
     
+    public void alterImageDirection(){
+        if (this.direction_x > 0){
+            this.image = new File("src/img/bee.png");
+        }else{
+            this.image = new File("src/img/bee2.png");
+        }
+    }
     
   
 }

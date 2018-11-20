@@ -129,6 +129,7 @@ public class Bird extends Agent implements AbstractAgent{
     }
 
     public int getDirection_x() {
+        this.alterImageDirection();
         return direction_x;
     }
 
@@ -173,5 +174,12 @@ public class Bird extends Agent implements AbstractAgent{
         this.state = state;
     }
 
+     public void alterImageDirection(){
+        if (this.direction_x > 0){
+            this.image = new File("src/img/bird.gif");
+        }else{
+            this.image = new File("src/img/bird2.gif");
+        }
+    }
     
 }

@@ -38,7 +38,7 @@ public class Worm extends Agent implements AbstractAgent{
         this.direction_y = -1;
         this.state = SEARCH;
         this.tpAgent = WORM;
-        this.image = new File("src/img/worm.png");
+        this.image = new File("src/img/bug.gif");
        
         if (Math.random()*100 > 50){
             this.direction_x = 1;
@@ -169,6 +169,4 @@ public class Worm extends Agent implements AbstractAgent{
         this.state = state;
     }
     
-    
-   
 }

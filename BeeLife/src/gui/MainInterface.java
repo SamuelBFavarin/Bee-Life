@@ -4,7 +4,11 @@ import gui.ConfiguratePanel.Status;
 import static gui.ConfiguratePanel.Status.START;
 import static gui.ConfiguratePanel.Status.STOP;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -20,6 +24,11 @@ public class MainInterface {
         // configuração gráfica
         JFrame  frame  = new JFrame("Bee Life");
         frame.setSize(1500, 800);
+        frame.setLocationRelativeTo(null);  
+        frame.setResizable(false);
+        URL resource = frame.getClass().getResource("/img/bee.png");
+        BufferedImage image = ImageIO.read(resource);
+        frame.setIconImage(image);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         ConfiguratePanel configuratePanel = new ConfiguratePanel();

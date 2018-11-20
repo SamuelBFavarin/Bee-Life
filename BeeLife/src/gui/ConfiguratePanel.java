@@ -33,7 +33,7 @@ public class ConfiguratePanel extends JPanel {
     public int flag_stop = 1;
     
     public ConfiguratePanel() {
-        this.setBackground(Color.DARK_GRAY);
+        this.setBackground(new Color(63, 50, 45));
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
             
         // imlpementa função start
@@ -55,6 +55,15 @@ public class ConfiguratePanel extends JPanel {
         lb_title.setForeground(Color.WHITE);
         this.add(lb_title);
         
+        // insere label para espaço
+        
+        this.add(new JLabel(" "));
+        
+        btn_start.setBackground(new Color(255, 214, 50));
+        btn_start.setMaximumSize(new Dimension(160, 30));
+        
+        btn_stop.setBackground(new Color(255, 212, 43));
+        btn_stop.setMaximumSize(new Dimension(160, 30));
         // insere botões
         this.add(btn_start);
         this.add(btn_stop);
@@ -104,7 +113,7 @@ public class ConfiguratePanel extends JPanel {
         this.add(input_flower);
         
         // insere label de pragas
-        JLabel lb_worm = new JLabel("Quantidade de pragas");
+        JLabel lb_worm = new JLabel("Quantidade de percevejos");
         lb_worm.setFont(new Font("Arial", Font.PLAIN, 14));
         lb_worm.setForeground(Color.WHITE);
         this.add(lb_worm);
