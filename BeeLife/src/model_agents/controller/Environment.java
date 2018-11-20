@@ -25,6 +25,9 @@ import model_agents.controller.AbstractAgent.typeAgent;
 import model_agents.flower.Flower;
 import model_agents.hive.Hive;
 import model_agents.worm.Worm;
+import model_agents.worm.WormGoAtack;
+import model_agents.worm.WormInfect;
+import model_agents.worm.WormSearch;
 
 /**
  * @author Vinicius
@@ -73,17 +76,25 @@ public class Environment extends Agent{
                             int y = Integer.valueOf(posicoes_bee[1]);
                             killBee(x, y);
                         }
-                    }else if(msg.getOntology().equalsIgnoreCase("BEE_ONTOLOGY")){
+                    }
+                    if(msg.getOntology().equalsIgnoreCase("BEE_ONTOLOGY")){
                         if(msg.getContent().equalsIgnoreCase("BORN_NEW_FLOWER")){
                             bornNewFlower();
+                        }
+                    }
+                    if(msg.getOntology().equalsIgnoreCase("WORM_ONTOLOGY")){
+                        if(msg.getLanguage().equalsIgnoreCase("KILL_BEE")){
+                            String posicoes_bee[] = msg.getContent().split(",");
+                            int x = Integer.valueOf(posicoes_bee[0]);
+                            int y = Integer.valueOf(posicoes_bee[1]);
+                            killBee(x, y);                           
                         }
                     }
                 }else{
                     block();
                 }
             }
-        });
-    
+        }); 
     }
     
     public void configAgents(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
@@ -168,6 +179,9 @@ public class Environment extends Agent{
                 new_worm.setEnvironment(this);
                 String nickname = nextAgentName(typeAgent.WORM);
                 new_worm.setNickName(nickname);
+                new_worm.addBehaviour(new WormSearch(new_worm, 100));
+                new_worm.addBehaviour(new WormInfect(new_worm, 100));
+                new_worm.addBehaviour(new WormGoAtack(new_worm, 100));
                 AgentController agentWorm = this.ac.acceptNewAgent(nickname, new_worm);
                 agentWorm.start();            
                 this.worms.add(new_worm);
@@ -191,41 +205,44 @@ public class Environment extends Agent{
                 case FLOWER:
                     break;
                 case WORM:
-                    Worm worm = (Worm) agents.get(i); 
-                    if (worm.getAbstractState() == SEARCH){ 
-                        if (worm.getPos_x() > this.width || worm.getPos_x() < 0){
-                            worm.setDirection_x(worm.getDirection_x() * - 1);
-                        }        
-                        worm.setPos_x(worm.getPos_x() + (worm.getSpeed() + (int) (Math.random()*10)) * worm.getDirection_x());
-                
-                        Flower flower_worm = haveFlower(worm.getPos_x(), worm.getPos_y());
-                        if (flower_worm != null && (Math.random() * 100) > worm.percent_no_infect){
-                            worm.setAbstractState(INFECT);
-                        }
-                    }
-                    if (worm.getAbstractState() == INFECT){
-                        if (haveBeeInX(worm.getPos_x())){
-                            worm.setAbstractState(GO_ATACK);
-                        }
-                    }
-                    if (worm.getAbstractState() == GO_ATACK){   
-                        if (worm.getPos_y() > this.height - 100 || worm.getPos_y() < this.height - 170){
-                            worm.setDirection_y(worm.getDirection_y() * -1);
-                            killBee(worm.getPos_x(), worm.getPos_y());
-                            if (worm.getPos_y() > this.height - 100){
-                                worm.setAbstractState(INFECT);
-                            }
-                        }
-                        worm.setPos_y(worm.getPos_y() - worm.getSpeed()*5 * worm.getDirection_y());
-                    }
+                    moveWorm((Worm) agents.get(i));
                     break;
             }       
         }   
         
     }
     
+    public void moveWorm(Worm worm){
+        if(worm.getAbstractState().equals(SEARCH)){
+            ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
+            msg.setOntology("WORM_ONTOLOGY");
+            msg.setLanguage("WORM_LANGUAGE");
+            Flower flower = haveFlower(worm.getPos_x(), worm.getPos_y());
+            if (flower != null ){
+                worm.setCurrent_flower(flower);
+                msg.setContent("INFECT");
+            }else{
+                msg.setContent("SEARCH");
+            }
+            msg.addReceiver(new AID(worm.getLocalName(), AID.ISLOCALNAME));
+            send(msg);
+        }
+        if(worm.getAbstractState().equals(INFECT)){
+            ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
+            msg.setOntology("WORM_ONTOLOGY");
+            msg.setLanguage("WORM_LANGUAGE");
+            if (haveBeeInX(worm.getPos_x())){
+                msg.setContent("GO_ATACK");
+            }else{
+                msg.setContent("INFECT");
+            }
+            msg.addReceiver(new AID(worm.getLocalName(), AID.ISLOCALNAME));
+            send(msg);           
+        }
+    }
+    
     public void moveBird(Bird bird){     
-        if (bird.getAbstractState() == PEACE){
+        if (bird.getAbstractState().equals(PEACE)){
             ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
             msg.setOntology("BIRD_ONTOLOGY");
             msg.setLanguage("BIRD_LANGUAGE");
@@ -256,7 +273,7 @@ public class Environment extends Agent{
             send(msg);
         }
         
-        if (bee.getAbstractState() == TO_HIVE){
+        if (bee.getAbstractState().equals(TO_HIVE)){
             ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
             msg.setOntology("BEE_ONTOLOGY");
             msg.setLanguage("BEE_LANGUAGE");   

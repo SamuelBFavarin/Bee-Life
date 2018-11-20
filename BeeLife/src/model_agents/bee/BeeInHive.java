@@ -11,7 +11,7 @@ import static model_agents.controller.AbstractAgent.behaviour.SEARCH;
  */
 public class BeeInHive extends TickerBehaviour {
 
-    private Bee bee;
+    Bee bee;
     
     public BeeInHive(Agent a, long period) {
         super(a, period);

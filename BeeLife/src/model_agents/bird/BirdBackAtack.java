@@ -11,7 +11,7 @@ import static model_agents.controller.AbstractAgent.behaviour.PEACE;
  */
 public class BirdBackAtack extends TickerBehaviour {
     
-    private Bird bird;
+    Bird bird;
 
     public BirdBackAtack(Agent a, long period) {
         super(a, period);

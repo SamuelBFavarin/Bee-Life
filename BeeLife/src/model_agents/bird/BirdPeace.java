@@ -1,7 +1,6 @@
 package model_agents.bird;
 
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import static model_agents.controller.AbstractAgent.behaviour.GO_ATACK;
@@ -13,7 +12,7 @@ import static model_agents.controller.AbstractAgent.behaviour.PEACE;
  */
 public class BirdPeace extends TickerBehaviour{
     
-    private Bird bird;
+    Bird bird;
 
     public BirdPeace(Agent a, long period) {
         super(a, period);

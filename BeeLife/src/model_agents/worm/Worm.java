@@ -7,6 +7,7 @@ import model_agents.controller.AbstractAgent;
 import model_agents.controller.AbstractAgent.behaviour;
 import static model_agents.controller.AbstractAgent.typeAgent.*;
 import model_agents.controller.Environment;
+import model_agents.flower.Flower;
 
 /**
  *
@@ -14,6 +15,7 @@ import model_agents.controller.Environment;
  */
 public class Worm extends Agent implements AbstractAgent{
     
+    private Flower current_flower = null;
     public int percent_no_infect = 95;
     private File image;
     private int height;
@@ -168,5 +170,13 @@ public class Worm extends Agent implements AbstractAgent{
     public void setAbstractState(behaviour state) {
         this.state = state;
     }
-    
+
+    public Flower getCurrent_flower() {
+        return current_flower;
+    }
+
+    public void setCurrent_flower(Flower current_flower) {
+        this.current_flower = current_flower;
+    }
+       
 }

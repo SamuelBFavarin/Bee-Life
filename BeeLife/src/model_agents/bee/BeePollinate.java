@@ -13,7 +13,7 @@ import static model_agents.controller.AbstractAgent.behaviour.TO_HIVE;
  */
 public class BeePollinate extends TickerBehaviour {
     
-    private Bee bee;
+    Bee bee;
 
     public BeePollinate(Agent a, long period) {
         super(a, period);

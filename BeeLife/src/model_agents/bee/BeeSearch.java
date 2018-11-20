@@ -12,7 +12,7 @@ import static model_agents.controller.AbstractAgent.behaviour.SEARCH;
  */
 public class BeeSearch extends TickerBehaviour {
     
-    private Bee bee;
+    Bee bee;
 
     public BeeSearch(Agent a, long period) {
         super(a, period);
@@ -32,7 +32,6 @@ public class BeeSearch extends TickerBehaviour {
                     bee.setDirection_y(bee.getDirection_y() * -1);
                 }
                 bee.setPos_y(bee.getPos_y() - bee.getSpeed() * bee.getDirection_y());    
-                
                 if(msg.getContent().equalsIgnoreCase("POLLINATING")){
                     bee.setAbstractState(POLLINATING);
                 }
