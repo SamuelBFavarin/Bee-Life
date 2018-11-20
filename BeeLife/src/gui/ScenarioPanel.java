@@ -50,17 +50,18 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     
     public void startSimulation(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
         this.environment = new Environment(getHeight(), getWidth());
-        this.environment.configAgents(qtd_bees, qtd_flowers, qtd_birds, qtd_worm);
+        this.environment.startEnvironment(qtd_bees, qtd_flowers, qtd_birds, qtd_worm);
         this.timer.start();
     }
     
     public void stopSimulation(){
+        this.environment.stopEnvironment();
         this.timer.stop();
         repaint();
     }
     
     public void update(){
-        this.environment.moveAgents();
+        this.environment.updateAgents();
         repaint();
     }
                           

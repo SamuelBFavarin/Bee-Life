@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 public class ConfiguratePanel extends JPanel {
     
     public enum Status{
-        START, STOP
+        START, STOP, PAUSE
     }
     
     public JButton btn_start = new JButton("Start");
@@ -30,7 +30,7 @@ public class ConfiguratePanel extends JPanel {
     public JFormattedTextField input_worm;
         
     public int flag_start = 0;
-    public int flag_stop = 1;
+    public int flag_stop = 0;
     
     public ConfiguratePanel() {
         this.setBackground(new Color(63, 50, 45));
@@ -83,7 +83,7 @@ public class ConfiguratePanel extends JPanel {
         
         // insere input de abelhas
         input_bees = new JFormattedTextField(10);
-        input_bees.setValue(60);
+        input_bees.setValue(15);
         input_bees.setMaximumSize(new Dimension(500, 30));
         this.add(input_bees);
         
@@ -96,7 +96,7 @@ public class ConfiguratePanel extends JPanel {
         
         // insere input de passaros
         input_bird = new JFormattedTextField(10);
-        input_bird.setValue(3);
+        input_bird.setValue(2);
         input_bird.setMaximumSize(new Dimension(500, 30));
         this.add(input_bird);
         
@@ -108,7 +108,7 @@ public class ConfiguratePanel extends JPanel {
         
         // insere input de flores
         input_flower = new JFormattedTextField(10);
-        input_flower.setValue(20);
+        input_flower.setValue(6);
         input_flower.setMaximumSize(new Dimension(500, 30));
         this.add(input_flower);
         
@@ -120,7 +120,7 @@ public class ConfiguratePanel extends JPanel {
         
         // insere input de pragas
         input_worm = new JFormattedTextField(5);
-        input_worm.setValue(5);
+        input_worm.setValue(2);
         input_worm.setMaximumSize(new Dimension(500, 30));
         this.add(input_worm);
         
@@ -131,7 +131,7 @@ public class ConfiguratePanel extends JPanel {
     public Status getStatus(){
       if (this.flag_start == 1) return START;
       else if (this.flag_stop == 1) return STOP;
-      return null;
+      return PAUSE;
     };
     
     

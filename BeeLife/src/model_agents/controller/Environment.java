@@ -97,7 +97,7 @@ public class Environment extends Agent{
         }); 
     }
     
-    public void configAgents(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
+    public void startEnvironment(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
         
         //Cria o ambiente apenas 1 vez, preciso dele para enviar/receber mensagens
         if (this.envCreated == 0){
@@ -191,8 +191,7 @@ public class Environment extends Agent{
         }    
     }   
     
-    public void moveAgents(){
-        bornNewBee();
+    public void updateAgents(){
         List<AbstractAgent> agents = this.getAllAgents();
         for (int i = 0; i < agents.size(); i++){
             switch(agents.get(i).getTpAgent()){
@@ -308,7 +307,25 @@ public class Environment extends Agent{
     
     public void bornNewBee () {
         if (this.hive.hive_nectar > 0){ 
-            configAgents(hive.hive_nectar, 0, 0, 0);
+            for (int i = 0; i < this.hive.hive_nectar; i++){
+                try {
+                    int x = (0 + (int) (Math.random() * 100));
+                    int y = (300 + i + (int)(Math.random() * 100));
+                    Bee new_bee = new Bee(x, y);
+                    new_bee.setEnvironment(this);
+                    String nickname = nextAgentName(typeAgent.BEE);
+                    new_bee.setNickName(nickname);
+                    new_bee.addBehaviour(new BeeSearch(new_bee, 100));
+                    new_bee.addBehaviour(new BeePollinate(new_bee, 100));
+                    new_bee.addBehaviour(new BeeToHive(new_bee, 100));
+                    new_bee.addBehaviour(new BeeInHive(new_bee, 100));
+                    AgentController agentBird = this.ac.acceptNewAgent(nickname, new_bee);
+                    agentBird.start();   
+                    this.bees.add(new_bee);
+                } catch (StaleProxyException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro em bornNewBee: " + ex.getMessage());
+                }  
+            }
         }
         hive.hive_nectar = 0;
     }
@@ -343,6 +360,7 @@ public class Environment extends Agent{
                 if (this.bees.get(i).getPos_x() >= (posx - 40) && this.bees.get(i).getPos_x() <= (posx + 40)){
                     if (this.bees.get(i).getPos_y() >= (posy - 40) && this.bees.get(i).getPos_y() <= (posy + 40)){
                         this.bees.get(i).setAbstractState(DIE);
+                        this.bees.get(i).doDelete();
                         this.bees.remove(i);
                         return true;
                     }
@@ -397,5 +415,29 @@ public class Environment extends Agent{
     public int getHeight() {
         return height;
     }
-       
+        
+    public void stopEnvironment(){
+ 
+        for (int i = 0; i < this.bees.size(); i++){
+            this.bees.get(i).doDelete();
+        }
+        
+        for (int i = 0; i < this.worms.size(); i++){
+            this.worms.get(i).doDelete();
+        }
+        
+        for (int i = 0; i < this.birds.size(); i++){
+            this.birds.get(i).doDelete();
+        }
+               
+        this.bees.removeAll(bees);
+        this.birds.removeAll(birds);
+        this.flowers.removeAll(flowers);
+        this.worms.removeAll(worms);
+        
+        nextBee = 0;
+        nextBird = 0;
+        nextFlower = 0;
+        nextWorm = 0;
+    }
  }
