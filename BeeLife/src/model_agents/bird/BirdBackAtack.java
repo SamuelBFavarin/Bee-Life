@@ -24,7 +24,7 @@ public class BirdBackAtack extends TickerBehaviour {
     protected void onTick() {
          if (bird.getAbstractState().equals(BACK_ATACK)){
             // alter X
-            if (bird.getPos_x() > bird.getEnvironment().getWidth() - 30 || bird.getPos_x() < 30){
+            if (bird.getPos_x() > bird.getEnvironment().getWidth() - 50 || bird.getPos_x() < 50){
                 bird.setDirection_x(bird.getDirection_x() * - 1);
             }        
 

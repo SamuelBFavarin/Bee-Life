@@ -27,7 +27,7 @@ public class BirdPeace extends Behaviour{
             ACLMessage msg = myAgent.receive();
             if (msg != null){
 
-                if (bird.getPos_x() > bird.getEnvironment().getWidth() - 30 || bird.getPos_x() < 30){
+                if (bird.getPos_x() > bird.getEnvironment().getWidth() - 50 || bird.getPos_x() < 50){
                     bird.setDirection_x(bird.getDirection_x() * - 1);
                 }        
                 bird.setPos_x(bird.getPos_x() + (bird.getSpeed() + (int) (Math.random()*10)) * bird.getDirection_x());
