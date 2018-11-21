@@ -29,6 +29,7 @@ public class BeePollinate extends TickerBehaviour {
                 }
             }
             bee.setLast_flower(bee.getCurrent_flower());
+            bee.setDirection_x(bee.getDirection_x() * -1);
             bee.setAbstractState(TO_HIVE);
         }
     }

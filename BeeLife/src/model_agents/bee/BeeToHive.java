@@ -25,6 +25,7 @@ public class BeeToHive extends TickerBehaviour {
         if (bee.getAbstractState() == TO_HIVE){
             ACLMessage msg = bee.receive();
             if (msg != null){
+                bee.alterImageDirection();
                 if (bee.getEnvironment().getHive().getPos_x() <= bee.getPos_x()){
                     bee.setPos_x(bee.getPos_x() - bee.getSpeed() *2);
                 }

@@ -24,10 +24,13 @@ public class BeeSearch extends TickerBehaviour {
         if (bee.getAbstractState().equals(SEARCH)){
             ACLMessage msg = bee.receive();
             if (msg != null){
-                if (bee.getPos_x() > bee.getEnvironment().getWidth() || bee.getPos_x() < 0){
+                if (bee.getPos_x() > bee.getEnvironment().getWidth() - 20 || bee.getPos_x() < 0){
                     bee.setDirection_x(bee.getDirection_x() * -1);
+                    bee.setPos_x((bee.getPos_x() + (bee.getSpeed() + (int) (Math.random()*10)) * bee.getDirection_x())*2); 
+                    bee.alterImageDirection();
                 }
                 bee.setPos_x(bee.getPos_x() + (bee.getSpeed() + (int) (Math.random()*10)) * bee.getDirection_x()); 
+                
                 if (bee.getPos_y() > bee.getEnvironment().getHeight() - 50 || bee.getPos_y() < 300 ){
                     bee.setDirection_y(bee.getDirection_y() * -1);
                 }
