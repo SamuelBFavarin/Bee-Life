@@ -86,7 +86,7 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     public void playBackGround() {
         try {
             sound = AudioSystem.getClip();
-            sound.open(AudioSystem.getAudioInputStream(new File("src/sound/environment.wav")));
+            sound.open(AudioSystem.getAudioInputStream(new File("src/sound/full_environment.wav")));
             sound.start();
         }catch(IOException | LineUnavailableException | UnsupportedAudioFileException e) {
             JOptionPane.showMessageDialog(null, "Erro em playBackGround(): " + e.getMessage());
