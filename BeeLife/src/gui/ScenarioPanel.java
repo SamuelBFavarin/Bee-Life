@@ -1,6 +1,6 @@
 package gui;
 
-import model_agents.controller.AbstractAgent;
+import model_agents.environment.AbstractAgent;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import model_agents.controller.Environment;
+import model_agents.environment.Environment;
 
 /**
  *

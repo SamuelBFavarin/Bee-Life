@@ -2,10 +2,10 @@ package model_agents.hive;
 
 import jade.core.Agent;
 import java.io.File;
-import model_agents.controller.AbstractAgent;
-import model_agents.controller.AbstractAgent.behaviour;
-import static model_agents.controller.AbstractAgent.typeAgent.*;
-import model_agents.controller.Environment;
+import model_agents.environment.AbstractAgent;
+import model_agents.environment.AbstractAgent.behaviour;
+import static model_agents.environment.AbstractAgent.typeAgent.*;
+import model_agents.environment.Environment;
 
 /**
  *

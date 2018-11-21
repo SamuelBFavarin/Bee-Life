@@ -4,12 +4,12 @@ import jade.core.Agent;
 import java.io.File;
 import java.util.List;
 import model_agents.flower.Flower;
-import model_agents.controller.AbstractAgent;
-import model_agents.controller.AbstractAgent.behaviour;
-import static model_agents.controller.AbstractAgent.behaviour.*;
-import model_agents.controller.AbstractAgent.typeAgent;
-import static model_agents.controller.AbstractAgent.typeAgent.*;
-import model_agents.controller.Environment;
+import model_agents.environment.AbstractAgent;
+import model_agents.environment.AbstractAgent.behaviour;
+import static model_agents.environment.AbstractAgent.behaviour.*;
+import model_agents.environment.AbstractAgent.typeAgent;
+import static model_agents.environment.AbstractAgent.typeAgent.*;
+import model_agents.environment.Environment;
 
 /**
  *
@@ -54,7 +54,10 @@ public class Bee extends Agent implements AbstractAgent{
     
     @Override
     protected void setup(){
-        
+        addBehaviour(new BeeSearch(this, 100));
+        addBehaviour(new BeePollinate(this, 100));
+        addBehaviour(new BeeToHive(this, 100));
+        addBehaviour(new BeeInHive(this, 100));    
     }
     
     public boolean haveFlower(int posx, int posy, List<Flower> flowers){
