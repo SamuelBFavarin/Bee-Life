@@ -1,13 +1,13 @@
 package model_agents.bird;
 
 import jade.core.Agent;
-import model_agents.controller.AbstractAgent;
-import static model_agents.controller.AbstractAgent.behaviour.PEACE;
-import static model_agents.controller.AbstractAgent.typeAgent.BIRD;
+import model_agents.environment.AbstractAgent;
+import static model_agents.environment.AbstractAgent.behaviour.PEACE;
+import static model_agents.environment.AbstractAgent.typeAgent.BIRD;
 import java.io.File;
-import model_agents.controller.AbstractAgent.behaviour;
-import model_agents.controller.AbstractAgent.typeAgent;
-import model_agents.controller.Environment;
+import model_agents.environment.AbstractAgent.behaviour;
+import model_agents.environment.AbstractAgent.typeAgent;
+import model_agents.environment.Environment;
 
 /**
  *
@@ -61,7 +61,9 @@ public class Bird extends Agent implements AbstractAgent{
     
     @Override
     protected void setup(){
-              
+        addBehaviour(new BirdPeace(this, 100));
+        addBehaviour(new BirdGoAtack(this, 100));
+        addBehaviour(new BirdBackAtack(this, 100));          
     }
 
     @Override

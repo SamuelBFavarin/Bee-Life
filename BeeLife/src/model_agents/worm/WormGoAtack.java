@@ -4,8 +4,8 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
-import static model_agents.controller.AbstractAgent.behaviour.GO_ATACK;
-import static model_agents.controller.AbstractAgent.behaviour.INFECT;
+import static model_agents.environment.AbstractAgent.behaviour.GO_ATACK;
+import static model_agents.environment.AbstractAgent.behaviour.INFECT;
 
 /**
  *

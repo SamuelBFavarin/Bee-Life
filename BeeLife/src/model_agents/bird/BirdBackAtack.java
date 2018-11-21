@@ -2,8 +2,8 @@ package model_agents.bird;
 
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
-import static model_agents.controller.AbstractAgent.behaviour.BACK_ATACK;
-import static model_agents.controller.AbstractAgent.behaviour.PEACE;
+import static model_agents.environment.AbstractAgent.behaviour.BACK_ATACK;
+import static model_agents.environment.AbstractAgent.behaviour.PEACE;
 
 /**
  *

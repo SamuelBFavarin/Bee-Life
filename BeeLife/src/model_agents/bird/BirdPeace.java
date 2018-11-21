@@ -3,8 +3,8 @@ package model_agents.bird;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
-import static model_agents.controller.AbstractAgent.behaviour.GO_ATACK;
-import static model_agents.controller.AbstractAgent.behaviour.PEACE;
+import static model_agents.environment.AbstractAgent.behaviour.GO_ATACK;
+import static model_agents.environment.AbstractAgent.behaviour.PEACE;
 
 /**
  *

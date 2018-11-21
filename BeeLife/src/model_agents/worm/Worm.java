@@ -1,12 +1,12 @@
 package model_agents.worm;
 
 import jade.core.Agent;
-import static model_agents.controller.AbstractAgent.behaviour.*;
+import static model_agents.environment.AbstractAgent.behaviour.*;
 import java.io.File;
-import model_agents.controller.AbstractAgent;
-import model_agents.controller.AbstractAgent.behaviour;
-import static model_agents.controller.AbstractAgent.typeAgent.*;
-import model_agents.controller.Environment;
+import model_agents.environment.AbstractAgent;
+import model_agents.environment.AbstractAgent.behaviour;
+import static model_agents.environment.AbstractAgent.typeAgent.*;
+import model_agents.environment.Environment;
 import model_agents.flower.Flower;
 
 /**
@@ -29,6 +29,7 @@ public class Worm extends Agent implements AbstractAgent{
     private int speed;
     private Environment environment;
     private String nickName;
+    private int time_waiting;
     
     public Worm( int pos_x, int pos_y) {
         
@@ -41,7 +42,7 @@ public class Worm extends Agent implements AbstractAgent{
         this.state = SEARCH;
         this.tpAgent = WORM;
         this.image = new File("src/img/bug.gif");
-       
+        this.time_waiting = 0;
         if (Math.random()*100 > 50){
             this.direction_x = 1;
         } else {
@@ -51,7 +52,9 @@ public class Worm extends Agent implements AbstractAgent{
     
     @Override
     protected void setup(){
-        
+        addBehaviour(new WormSearch(this, 100));
+        addBehaviour(new WormInfect(this, 100));
+        addBehaviour(new WormGoAtack(this, 100));    
     }
 
     public int getPercent_no_infect() {
@@ -178,5 +181,13 @@ public class Worm extends Agent implements AbstractAgent{
     public void setCurrent_flower(Flower current_flower) {
         this.current_flower = current_flower;
     }
-       
+
+    public int getTime_waiting() {
+        return time_waiting;
+    }
+
+    public void setTime_waiting(int time_waiting) {
+        this.time_waiting = time_waiting;
+    }
+   
 }

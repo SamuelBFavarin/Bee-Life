@@ -5,8 +5,8 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
-import static model_agents.controller.AbstractAgent.behaviour.GO_ATACK;
-import static model_agents.controller.AbstractAgent.behaviour.BACK_ATACK;
+import static model_agents.environment.AbstractAgent.behaviour.GO_ATACK;
+import static model_agents.environment.AbstractAgent.behaviour.BACK_ATACK;
 
 /**
  *
@@ -40,8 +40,10 @@ public class BirdGoAtack extends TickerBehaviour {
             if (bird.getPos_y() >= bird.getEnvironment().getHeight() - 200){
                
                 bird.setAbstractState(BACK_ATACK);
-            }            
-             sendKillBee(bird.getPos_x(), bird.getPos_y());
+            } 
+            if (Math.random()*100 > 80){
+                sendKillBee(bird.getPos_x(), bird.getPos_y());
+            }
         }                
     }
     

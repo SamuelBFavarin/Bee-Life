@@ -3,8 +3,8 @@ package model_agents.bee;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
-import static model_agents.controller.AbstractAgent.behaviour.POLLINATING;
-import static model_agents.controller.AbstractAgent.behaviour.SEARCH;
+import static model_agents.environment.AbstractAgent.behaviour.POLLINATING;
+import static model_agents.environment.AbstractAgent.behaviour.SEARCH;
 
 /**
  *

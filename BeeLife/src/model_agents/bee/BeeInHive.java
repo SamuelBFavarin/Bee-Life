@@ -2,8 +2,8 @@ package model_agents.bee;
 
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
-import static model_agents.controller.AbstractAgent.behaviour.IN_HIVE;
-import static model_agents.controller.AbstractAgent.behaviour.SEARCH;
+import static model_agents.environment.AbstractAgent.behaviour.IN_HIVE;
+import static model_agents.environment.AbstractAgent.behaviour.SEARCH;
 
 /**
  *
