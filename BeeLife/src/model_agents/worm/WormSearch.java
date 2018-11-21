@@ -26,8 +26,9 @@ public class WormSearch extends TickerBehaviour{
             ACLMessage msg = worm.receive();
             if (msg != null){
                 worm.playSound();
-                if (worm.getPos_x() > worm.getEnvironment().getWidth() || worm.getPos_x() < 0){
+                if (worm.getPos_x() > worm.getEnvironment().getWidth() - 30 || worm.getPos_x() < 0){
                     worm.setDirection_x(worm.getDirection_x() * - 1);
+                    worm.setPos_x(worm.getPos_x() + (worm.getSpeed() + (int) (Math.random()*10)) * worm.getDirection_x());
                 }        
                 worm.setPos_x(worm.getPos_x() + (worm.getSpeed() + (int) (Math.random()*10)) * worm.getDirection_x());
                 if(msg.getContent().equalsIgnoreCase("INFECT")){
