@@ -44,8 +44,10 @@ public class BirdGoAtack extends TickerBehaviour {
             if (bird.getPos_y() >= bird.getEnvironment().getHeight() - 200){
                
                 bird.setAbstractState(BACK_ATACK);
-            }            
-             sendKillBee(bird.getPos_x(), bird.getPos_y());
+            } 
+            if (Math.random()*100 > 80){
+                sendKillBee(bird.getPos_x(), bird.getPos_y());
+            }
         }                
     }
     
