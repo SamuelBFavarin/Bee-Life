@@ -153,7 +153,5 @@ public class Hive extends Agent implements AbstractAgent{
     public void setAbstractState(behaviour state) {
         this.state = state;
     }
-    
-    
        
 }

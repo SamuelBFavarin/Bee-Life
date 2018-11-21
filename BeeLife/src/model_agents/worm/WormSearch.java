@@ -25,6 +25,7 @@ public class WormSearch extends TickerBehaviour{
         if (worm.getAbstractState().equals(SEARCH)){
             ACLMessage msg = worm.receive();
             if (msg != null){
+                worm.playSound();
                 if (worm.getPos_x() > worm.getEnvironment().getWidth() || worm.getPos_x() < 0){
                     worm.setDirection_x(worm.getDirection_x() * - 1);
                 }        

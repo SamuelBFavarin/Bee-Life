@@ -2,7 +2,13 @@ package model_agents.bee;
 
 import jade.core.Agent;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JOptionPane;
 import model_agents.flower.Flower;
 import model_agents.environment.AbstractAgent;
 import model_agents.environment.AbstractAgent.behaviour;
@@ -17,9 +23,9 @@ import model_agents.environment.Environment;
  */
 public class Bee extends Agent implements AbstractAgent{
     
+    private Clip sound;
     private Flower current_flower = null;
     private Flower last_flower = null;
-    private String sex_last_flower = null;
     private File image;
     private int height;
     private int width;
@@ -75,14 +81,6 @@ public class Bee extends Agent implements AbstractAgent{
     public boolean nearMascFlower(List<Flower> flowers){
       return false;  
     };
-
-    public String getSex_last_flower() {
-        return sex_last_flower;
-    }
-
-    public void setSex_last_flower(String sex_last_flower) {
-        this.sex_last_flower = sex_last_flower;
-    }
 
     @Override
     public File getImage() {
@@ -213,5 +211,4 @@ public class Bee extends Agent implements AbstractAgent{
     public void setLast_flower(Flower last_flower) {
         this.last_flower = last_flower;
     }     
-  
 }

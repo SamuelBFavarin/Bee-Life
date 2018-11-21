@@ -8,8 +8,16 @@ import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 import model_agents.bee.Bee;
 import model_agents.bee.BeeInHive;
@@ -19,6 +27,8 @@ import model_agents.bee.BeeToHive;
 import model_agents.bird.Bird;
 import static model_agents.environment.AbstractAgent.behaviour.*;
 import model_agents.environment.AbstractAgent.typeAgent;
+import static model_agents.environment.AbstractAgent.typeAgent.BEE;
+import static model_agents.environment.AbstractAgent.typeAgent.ENVIRONMENT;
 import model_agents.flower.Flower;
 import model_agents.hive.Hive;
 import model_agents.worm.Worm;
@@ -37,7 +47,7 @@ public class Environment extends Agent{
     private final int width;
     private final int height;
     private int envCreated;
-    
+    private Clip env_sound;    
     private int nextBee;
     private int nextFlower;
     private int nextBird;
@@ -172,13 +182,42 @@ public class Environment extends Agent{
             } catch (StaleProxyException ex) {
                 JOptionPane.showMessageDialog(null, "Erro em iniciar os Worms: " + ex.getMessage());
             }           
-        }    
-    }   
+        }  
+    }  
+    
+    public void stopEnvironment(){
+ 
+        for (int i = 0; i < this.bees.size(); i++){
+            this.bees.get(i).doDelete();
+        }
+        
+        for (int i = 0; i < this.worms.size(); i++){
+            this.worms.get(i).doDelete();
+            this.worms.get(i).stopSound();
+        }
+        
+        for (int i = 0; i < this.birds.size(); i++){
+            this.birds.get(i).doDelete();
+            this.birds.get(i).stopSound();
+        }
+               
+        this.bees.removeAll(bees);
+        this.birds.removeAll(birds);
+        this.flowers.removeAll(flowers);
+        this.worms.removeAll(worms);
+        
+        nextBee = 0;
+        nextBird = 0;
+        nextFlower = 0;
+        nextWorm = 0;
+        stopBackGroundSound();
+    }
     
     public void updateAgents(){
         moveBee();
         moveBird();
         moveWorm();
+        playBackGroundSound();
     }
     
     public void moveWorm(){
@@ -272,17 +311,7 @@ public class Environment extends Agent{
             }            
         }
     }
-    
-    public List getAllAgents(){
-        List<AbstractAgent> agents = new ArrayList<>();
-        agents.addAll(bees);
-        agents.addAll(birds);
-        agents.addAll(worms);
-        agents.addAll(flowers);
-        agents.add(hive);
-        return agents;
-    }
-    
+        
     public void bornNewFlower () {
         int val = (int) (Math.random() * (this.width - 1)) + 1;
         if (val > (this.width / 2)){
@@ -361,9 +390,7 @@ public class Environment extends Agent{
         return false;
     };
     
-    public Hive getHive() {
-        return hive;
-    }
+    /**** GETS ****/
     
     public String nextAgentName(typeAgent agent){
         String name = "";
@@ -390,6 +417,16 @@ public class Environment extends Agent{
         return name;
     }
 
+    public List getAllAgents(){
+        List<AbstractAgent> agents = new ArrayList<>();
+        agents.addAll(bees);
+        agents.addAll(birds);
+        agents.addAll(worms);
+        agents.addAll(flowers);
+        agents.add(hive);
+        return agents;
+    }
+    
     public int getWidth() {
         return width;
     }
@@ -397,29 +434,43 @@ public class Environment extends Agent{
     public int getHeight() {
         return height;
     }
+    
+    public Hive getHive() {
+        return hive;
+    }
+    
+    /**** SOUNDS ****/
+      
+    public void playBackGroundSound(){
         
-    public void stopEnvironment(){
- 
-        for (int i = 0; i < this.bees.size(); i++){
-            this.bees.get(i).doDelete();
+        if (this.env_sound == null){
+            try {
+                this.env_sound = AudioSystem.getClip();
+                this.env_sound.open(AudioSystem.getAudioInputStream(new File("src/sound/environment_bee.wav")));
+                this.env_sound.start(); 
+            } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                JOptionPane.showMessageDialog(null, "Erro em Environment.playBackGroundSound(): " + ex.getMessage());
+            }
+        }else{
+            if (!this.env_sound.isRunning()){
+                if (getAllAgents().size() > 1){
+                    try {
+                       this.env_sound = AudioSystem.getClip();
+                       this.env_sound.open(AudioSystem.getAudioInputStream(new File("src/sound/environment_bee.wav")));
+                       this.env_sound.start(); 
+                   } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                       JOptionPane.showMessageDialog(null, "Erro em Environment.playBackGroundSound(): " + ex.getMessage());
+                   }                   
+                }            
+            }               
         }
-        
-        for (int i = 0; i < this.worms.size(); i++){
-            this.worms.get(i).doDelete();
-        }
-        
-        for (int i = 0; i < this.birds.size(); i++){
-            this.birds.get(i).doDelete();
-        }
-               
-        this.bees.removeAll(bees);
-        this.birds.removeAll(birds);
-        this.flowers.removeAll(flowers);
-        this.worms.removeAll(worms);
-        
-        nextBee = 0;
-        nextBird = 0;
-        nextFlower = 0;
-        nextWorm = 0;
+    }
+    
+    public void stopBackGroundSound(){
+        if (env_sound != null){
+            if (env_sound.isRunning()){
+                env_sound.stop();
+            }
+        }  
     }
  }

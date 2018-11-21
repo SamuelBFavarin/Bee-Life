@@ -9,11 +9,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
@@ -31,7 +28,6 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     
     private final Timer timer;
     private Environment environment;
-    private Clip sound;
     
     public ScenarioPanel() throws IOException {        
         this.background = ImageIO.read(new File("src/img/jungle.jpg"));            
@@ -57,13 +53,11 @@ public class ScenarioPanel extends JPanel implements ActionListener{
     public void startSimulation(int qtd_bees, int qtd_flowers, int qtd_birds, int qtd_worm){
         this.environment = new Environment(getHeight(), getWidth());
         this.environment.startEnvironment(qtd_bees, qtd_flowers, qtd_birds, qtd_worm);
-        playBackGround();
         this.timer.start();
     }
     
     public void stopSimulation(){
         this.environment.stopEnvironment();
-        stopBackGround();
         this.timer.stop();
         repaint();
     }
@@ -82,23 +76,5 @@ public class ScenarioPanel extends JPanel implements ActionListener{
             }
         }
     }
-    
-    public void playBackGround() {
-        try {
-            sound = AudioSystem.getClip();
-            sound.open(AudioSystem.getAudioInputStream(new File("src/sound/full_environment.wav")));
-            sound.start();
-        }catch(IOException | LineUnavailableException | UnsupportedAudioFileException e) {
-            JOptionPane.showMessageDialog(null, "Erro em playBackGround(): " + e.getMessage());
-        }
-    }
-    
-    public void stopBackGround(){
-        if (sound != null){
-            if (sound.isRunning()){
-                sound.stop();
-            }
-        }
-    }
-                 
+         
 }

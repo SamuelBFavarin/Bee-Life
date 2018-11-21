@@ -3,6 +3,12 @@ package model_agents.worm;
 import jade.core.Agent;
 import static model_agents.environment.AbstractAgent.behaviour.*;
 import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JOptionPane;
 import model_agents.environment.AbstractAgent;
 import model_agents.environment.AbstractAgent.behaviour;
 import static model_agents.environment.AbstractAgent.typeAgent.*;
@@ -30,6 +36,7 @@ public class Worm extends Agent implements AbstractAgent{
     private Environment environment;
     private String nickName;
     private int time_waiting;
+    private Clip worm_sound;
     
     public Worm( int pos_x, int pos_y) {
         
@@ -188,6 +195,36 @@ public class Worm extends Agent implements AbstractAgent{
 
     public void setTime_waiting(int time_waiting) {
         this.time_waiting = time_waiting;
+    }
+    
+        public void playSound(){
+        if (this.worm_sound != null){
+            if (!this.worm_sound.isRunning()){
+                try {
+                    this.worm_sound = AudioSystem.getClip();
+                    this.worm_sound.open(AudioSystem.getAudioInputStream(new File("src/sound/worm.wav")));
+                    this.worm_sound.start(); 
+                }catch(LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                        JOptionPane.showMessageDialog(null, "Erro em Worm.playSound(): " + ex.getMessage());
+                }                
+            }
+        }else{
+            try {
+                this.worm_sound = AudioSystem.getClip();
+                this.worm_sound.open(AudioSystem.getAudioInputStream(new File("src/sound/worm.wav")));
+                this.worm_sound.start(); 
+            }catch(LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro em Worm.playSound(): " + ex.getMessage());
+            }
+        }
+    }
+        
+    public void stopSound(){
+         if (worm_sound != null){
+            if (worm_sound.isRunning()){
+                worm_sound.stop();
+            }
+        }         
     }
    
 }

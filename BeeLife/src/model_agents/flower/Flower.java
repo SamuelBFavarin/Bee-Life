@@ -158,8 +158,7 @@ public class Flower extends Agent implements AbstractAgent{
     @Override
     public void setAbstractState(behaviour state) {
         this.state = state;
-    }
-    
+    } 
     
     
 }

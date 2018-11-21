@@ -9,7 +9,7 @@ import java.io.File;
 public interface AbstractAgent{
    
     public enum typeAgent{
-        BEE, BIRD, FLOWER, WORM, HIVE
+        BEE, BIRD, FLOWER, WORM, HIVE, ENVIRONMENT
     }
     public enum behaviour{
         PEACE, GO_ATACK, BACK_ATACK, SEARCH, POLLINATING, TO_HIVE, IN_HIVE, INFECT, DIE

@@ -25,7 +25,8 @@ public class BirdGoAtack extends TickerBehaviour {
     protected void onTick() {
          if (bird.getAbstractState().equals(GO_ATACK)){
             
-             // alter X
+            bird.playSound();            
+            
             if (bird.getPos_x() > bird.getEnvironment().getWidth() -75 || bird.getPos_x() <20){
                 bird.setDirection_x(bird.getDirection_x() * - 1);
                 bird.setPos_x(bird.getPos_x() + (bird.getSpeed() +  (int) (Math.random()*10)) * bird.getDirection_x());

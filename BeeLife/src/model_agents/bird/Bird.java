@@ -5,6 +5,12 @@ import model_agents.environment.AbstractAgent;
 import static model_agents.environment.AbstractAgent.behaviour.PEACE;
 import static model_agents.environment.AbstractAgent.typeAgent.BIRD;
 import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JOptionPane;
 import model_agents.environment.AbstractAgent.behaviour;
 import model_agents.environment.AbstractAgent.typeAgent;
 import model_agents.environment.Environment;
@@ -28,6 +34,7 @@ public class Bird extends Agent implements AbstractAgent{
     private int speed;
     private Environment environment;
     private String nickName;
+    private Clip bird_sound;
     
     public Bird() {
         this.height = 80;
@@ -176,12 +183,42 @@ public class Bird extends Agent implements AbstractAgent{
         this.state = state;
     }
 
-     public void alterImageDirection(){
+    public void alterImageDirection(){
         if (this.direction_x > 0){
             this.image = new File("src/img/bird.gif");
         }else{
             this.image = new File("src/img/bird2.gif");
         }
+    }
+    
+    public void playSound(){
+        if (this.bird_sound != null){
+            if (!this.bird_sound.isRunning()){
+                try {
+                    this.bird_sound = AudioSystem.getClip();
+                    this.bird_sound.open(AudioSystem.getAudioInputStream(new File("src/sound/bird.wav")));
+                    this.bird_sound.start(); 
+                }catch(LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                        JOptionPane.showMessageDialog(null, "Erro em Bird.playSound(): " + ex.getMessage());
+                }                
+            }
+        }else{
+            try {
+                this.bird_sound = AudioSystem.getClip();
+                this.bird_sound.open(AudioSystem.getAudioInputStream(new File("src/sound/bird.wav")));
+                this.bird_sound.start(); 
+            }catch(LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro em Bird.playSound(): " + ex.getMessage());
+            }
+        }
+    }
+    
+    public void stopSound(){
+        if (bird_sound != null){
+            if (bird_sound.isRunning()){
+                bird_sound.stop();
+            }
+        }     
     }
     
 }
